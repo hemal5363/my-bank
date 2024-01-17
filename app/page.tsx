@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -8,15 +7,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import AddEditAccount from "@/components/shared/AddEditAccount";
+import { getAllAccount } from "@/utils/actions";
+import DeleteAccount from "@/components/shared/DeleteAccount";
 
-export default function Home() {
+const page = async () => {
+  const allAccounts = await getAllAccount();
+
+  let total = 0;
+  allAccounts.forEach((account) => {
+    total = total + account.amount;
+  });
+
   return (
     <div className="md:m-32 sm:m-16 m-8 border-2 rounded-3xl sm:p-12 p-6">
       <div className="flex sm:flex-row justify-between items-center gap-4">
         <h1 className="text-xl font-bold">My Accounts</h1>
-        <Button size="lg" className="rounded-xl" variant="outline">
-          Add Account
-        </Button>
+        <AddEditAccount buttonName="Add Account" />
       </div>
       <Table className="mt-5">
         <TableHeader>
@@ -26,11 +33,21 @@ export default function Home() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {invoices.map((invoice) => (
-            <TableRow key={invoice.invoice}>
-              <TableCell className="font-medium">{invoice.invoice}</TableCell>
+          {allAccounts.map((account) => (
+            <TableRow key={account.id}>
+              <TableCell className="font-medium">{account.name}</TableCell>
+              <TableCell className="text-right">{account.amount}</TableCell>
               <TableCell className="text-right">
-                {invoice.totalAmount}
+                <AddEditAccount
+                  buttonName="Edit Account"
+                  isEdit
+                  openId={account.id}
+                  selectedName={account.name}
+                  selectedAmount={account.amount}
+                />
+              </TableCell>
+              <TableCell className="text-right">
+                <DeleteAccount accountId={account.id} />
               </TableCell>
             </TableRow>
           ))}
@@ -39,14 +56,14 @@ export default function Home() {
           <TableRow>
             <TableCell className="text-base font-bold">Total</TableCell>
             <TableCell className="text-right font-bold text-base">
-              $2,500.00
+              {total}
             </TableCell>
           </TableRow>
         </TableFooter>
       </Table>
     </div>
   );
-}
+};
 
 const invoices = [
   {
@@ -92,3 +109,5 @@ const invoices = [
     paymentMethod: "Credit Card",
   },
 ];
+
+export default page;
