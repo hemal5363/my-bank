@@ -13,9 +13,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createAccount, editAccount } from "@/utils/actions";
+import { hideLoader, showLoader } from "@/utils/helper";
 
 interface IAddEditAccount {
   buttonName: string;
+  doReload: () => void;
   isEdit?: boolean;
   openId?: string;
   selectedName?: string;
@@ -24,12 +26,12 @@ interface IAddEditAccount {
 
 const AddEditAccount = ({
   buttonName,
+  doReload,
   isEdit = false,
   openId = "",
   selectedName = "",
   selectedAmount = 0,
 }: IAddEditAccount) => {
-  console.log("selectedName", selectedName, selectedAmount);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [amount, setAmount] = useState(0);
@@ -46,18 +48,21 @@ const AddEditAccount = ({
   };
 
   const handleSaveClick = async () => {
+    handleOpenChange(false);
+    showLoader();
     if (isEdit) {
       await editAccount(openId, name, amount);
     } else {
       await createAccount(name, amount);
     }
-    handleOpenChange(false);
+    hideLoader();
+    doReload();
   };
 
   return (
     <Dialog onOpenChange={handleOpenChange} open={open}>
       <DialogTrigger asChild>
-        <Button size="lg" className="rounded-xl" variant="outline">
+        <Button size="lg" className="rounded-xl" variant="default">
           {buttonName}
         </Button>
       </DialogTrigger>

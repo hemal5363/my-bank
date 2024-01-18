@@ -4,11 +4,18 @@ import { revalidatePath } from "next/cache";
 import prisma from "./db";
 
 export const getAllAccount = async () => {
-  return await prisma.account.findMany({
+  const data = await prisma.account.findMany({
     orderBy: {
       createdAt: "desc",
     },
   });
+
+  let total = 0;
+  data.forEach((account) => {
+    total = total + account.amount;
+  });
+
+  return { data, totalAmount: total };
 };
 
 export const createAccount = async (name: string, amount: number) => {
@@ -18,7 +25,6 @@ export const createAccount = async (name: string, amount: number) => {
       amount,
     },
   });
-  revalidatePath("/");
 };
 
 export const editAccount = async (id: string, name: string, amount: number) => {
@@ -31,7 +37,6 @@ export const editAccount = async (id: string, name: string, amount: number) => {
       amount,
     },
   });
-  revalidatePath("/");
 };
 
 export const deleteAccount = async (id: string) => {
@@ -40,5 +45,4 @@ export const deleteAccount = async (id: string) => {
       id,
     },
   });
-  revalidatePath("/");
 };
