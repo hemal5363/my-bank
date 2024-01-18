@@ -1,7 +1,8 @@
 "use client";
 
-import { deleteAccount } from "@/utils/actions";
+import RemoveCircleOutlineRoundedIcon from '@mui/icons-material/RemoveCircleOutlineRounded';
 
+import { deleteAccount } from "@/utils/actions";
 import { Button } from "@/components/ui/button";
 import { hideLoader, showLoader } from "@/utils/helper";
 
@@ -20,8 +21,8 @@ const DeleteAccount = ({
   };
 
   return (
-    <Button variant="destructive" onClick={() => handleDeleteClick(accountId)}>
-      Delete
+    <Button size="icon" variant="destructive" className="rounded-xl" onClick={() => handleDeleteClick(accountId)}>
+      <RemoveCircleOutlineRoundedIcon />
     </Button>
   );
 };

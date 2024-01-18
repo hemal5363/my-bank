@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
+import EditRoundedIcon from "@mui/icons-material/EditRounded";
+import CurrencyExchangeRoundedIcon from "@mui/icons-material/CurrencyExchangeRounded";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,13 +15,14 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createAccount, editAccount } from "@/utils/actions";
+import { addAmount, createAccount, editAccount } from "@/utils/actions";
 import { hideLoader, showLoader } from "@/utils/helper";
 
 interface IAddEditAccount {
   buttonName: string;
   doReload: () => void;
   isEdit?: boolean;
+  isAddAmount?: boolean;
   openId?: string;
   selectedName?: string;
   selectedAmount?: number;
@@ -28,6 +32,7 @@ const AddEditAccount = ({
   buttonName,
   doReload,
   isEdit = false,
+  isAddAmount = false,
   openId = "",
   selectedName = "",
   selectedAmount = 0,
@@ -52,6 +57,8 @@ const AddEditAccount = ({
     showLoader();
     if (isEdit) {
       await editAccount(openId, name, amount);
+    } else if (isAddAmount) {
+      await addAmount(openId, amount);
     } else {
       await createAccount(name, amount);
     }
@@ -62,8 +69,14 @@ const AddEditAccount = ({
   return (
     <Dialog onOpenChange={handleOpenChange} open={open}>
       <DialogTrigger asChild>
-        <Button size="lg" className="rounded-xl" variant="default">
-          {buttonName}
+        <Button size="icon" className="rounded-xl">
+          {isEdit ? (
+            <EditRoundedIcon />
+          ) : isAddAmount ? (
+            <CurrencyExchangeRoundedIcon />
+          ) : (
+            <AddCircleOutlineRoundedIcon />
+          )}
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -71,20 +84,22 @@ const AddEditAccount = ({
           <DialogTitle>{buttonName}</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Name
-            </Label>
-            <Input
-              id="name"
-              placeholder="Enter name"
-              className="col-span-3"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              defaultValue={selectedName}
-            />
-          </div>
+          {!isAddAmount && (
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
+                Name
+              </Label>
+              <Input
+                id="name"
+                placeholder="Enter name"
+                className="col-span-3"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                defaultValue={selectedName}
+              />
+            </div>
+          )}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="amount" className="text-right">
               Amount
@@ -106,7 +121,7 @@ const AddEditAccount = ({
             type="submit"
             size="lg"
             onClick={handleSaveClick}
-            disabled={!name || !amount}
+            disabled={(!name && !isAddAmount) || !amount}
           >
             {buttonName}
           </Button>

@@ -46,3 +46,22 @@ export const deleteAccount = async (id: string) => {
     },
   });
 };
+
+export const addAmount = async (id: string, amount: number) => {
+  const oldAccount = await prisma.account.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (oldAccount?.id) {
+    await prisma.account.update({
+      where: {
+        id,
+      },
+      data: {
+        amount: oldAccount?.amount + amount,
+      },
+    });
+  }
+};
