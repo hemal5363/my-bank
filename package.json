@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "vercel-build": "prisma generate && prisma migrate deploy && next build",
-    "postinstall": "prisma generate"
+    "prisma": "prisma db pull && prisma generate"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.5",
