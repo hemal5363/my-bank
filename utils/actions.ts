@@ -74,3 +74,14 @@ export const addAmount = async (id: string, amount: number) => {
     await createAccountHistory(oldAccount, amount);
   }
 };
+
+export const getAllAccountHistory = async (id: string) => {
+  return await prisma.accountHistory.findMany({
+    where: {
+      accountId: id,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+};

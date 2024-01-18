@@ -1,5 +1,6 @@
 "use client";
 
+import PreviewRoundedIcon from "@mui/icons-material/PreviewRounded";
 import {
   Table,
   TableBody,
@@ -15,6 +16,8 @@ import DeleteAccount from "@/components/shared/DeleteAccount";
 import { useEffect, useState } from "react";
 import { hideLoader, showLoader } from "@/utils/helper";
 import { IAccount } from "@/types";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const page = () => {
   const [allAccounts, setAllAccounts] = useState<IAccount[]>([]);
@@ -55,6 +58,13 @@ const page = () => {
             <TableRow key={account.id}>
               <TableCell className="font-medium">{account.name}</TableCell>
               <TableCell className="text-right">{account.amount}</TableCell>
+              <TableCell className="text-right">
+                <Button size="icon" variant="outline" className="rounded-xl">
+                  <Link href={`/my-accounts/${account.id}`}>
+                    <PreviewRoundedIcon color="primary" />
+                  </Link>
+                </Button>
+              </TableCell>
               <TableCell className="text-right">
                 <AddEditAccount
                   buttonName="Add Amount"

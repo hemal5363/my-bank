@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import Loader from "@/components/shared/Loader";
 import "./globals.css";
 import Header from "@/components/shared/Header";
-
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -19,10 +18,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div id="mainDiv" className="h-screen flex flex-col relative overflow-auto">
+        <div
+          id="mainDiv"
+          className="h-screen flex flex-col relative overflow-auto"
+        >
           <Header />
           <Loader />
-          <main className="flex-1">{children}</main>
+          <main className="flex-1">
+            {children}
+          </main>
           {/* <Footer /> */}
         </div>
       </body>

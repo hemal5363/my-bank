@@ -3,3 +3,10 @@ export interface IAccount {
   name: string;
   amount: number;
 }
+
+export interface IAccountHistory {
+  id: string;
+  amount: number;
+  newAmount: number;
+  action: string;
+}
