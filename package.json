@@ -10,7 +10,9 @@
     "link": "vercel link",
     "vercel": "vercel env pull .env.development.local",
     "vercel-build": "prisma generate && prisma migrate deploy && next build",
-    "prisma": "prisma db pull && prisma generate"
+    "prisma-pull": "prisma db pull",
+    "prisma-push": "prisma db push",
+    "prisma": "prisma generate"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",

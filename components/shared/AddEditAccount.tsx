@@ -15,26 +15,22 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { addAmount, createAccount, editAccount } from "@/utils/actions";
+import { addAmount, createAccount } from "@/utils/actions";
 import { hideLoader, showLoader } from "@/utils/helper";
 
 interface IAddEditAccount {
   buttonName: string;
   doReload: () => void;
-  isEdit?: boolean;
   isAddAmount?: boolean;
   openId?: string;
-  selectedName?: string;
   selectedAmount?: number;
 }
 
 const AddEditAccount = ({
   buttonName,
   doReload,
-  isEdit = false,
   isAddAmount = false,
   openId = "",
-  selectedName = "",
   selectedAmount = 0,
 }: IAddEditAccount) => {
   const [open, setOpen] = useState(false);
@@ -44,20 +40,17 @@ const AddEditAccount = ({
   const handleOpenChange = (change: any) => {
     setOpen(change);
     if (change) {
-      setName(selectedName);
       setAmount(selectedAmount);
     } else {
-      setName("");
       setAmount(0);
     }
+    setName("");
   };
 
   const handleSaveClick = async () => {
     handleOpenChange(false);
     showLoader();
-    if (isEdit) {
-      await editAccount(openId, name, amount);
-    } else if (isAddAmount) {
+    if (isAddAmount) {
       await addAmount(openId, amount);
     } else {
       await createAccount(name, amount);
@@ -70,9 +63,7 @@ const AddEditAccount = ({
     <Dialog onOpenChange={handleOpenChange} open={open}>
       <DialogTrigger asChild>
         <Button size="icon" className="rounded-xl">
-          {isEdit ? (
-            <EditRoundedIcon />
-          ) : isAddAmount ? (
+          {isAddAmount ? (
             <CurrencyExchangeRoundedIcon />
           ) : (
             <AddCircleOutlineRoundedIcon />
@@ -96,7 +87,6 @@ const AddEditAccount = ({
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                defaultValue={selectedName}
               />
             </div>
           )}

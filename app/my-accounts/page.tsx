@@ -64,16 +64,6 @@ const page = () => {
                 />
               </TableCell>
               <TableCell className="text-right">
-                <AddEditAccount
-                  buttonName="Edit"
-                  isEdit
-                  doReload={doReload}
-                  openId={account.id}
-                  selectedName={account.name}
-                  selectedAmount={account.amount}
-                />
-              </TableCell>
-              <TableCell className="text-right">
                 <DeleteAccount accountId={account.id} doReload={doReload} />
               </TableCell>
             </TableRow>
@@ -85,6 +75,7 @@ const page = () => {
             <TableCell className="text-right font-bold text-base">
               {total}
             </TableCell>
+            <TableCell className="text-base font-bold"></TableCell>
             <TableCell className="text-base font-bold"></TableCell>
             <TableCell className="text-base font-bold"></TableCell>
           </TableRow>

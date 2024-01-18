@@ -9,8 +9,19 @@ datasource db {
 }
 
 model Account {
+  id             String           @id @default(uuid())
+  name           String
+  amount         Int
+  createdAt      DateTime         @default(now())
+  accountHistory AccountHistory[]
+}
+
+model AccountHistory {
   id        String   @id @default(uuid())
-  name      String
   amount    Int
+  newAmount Int
+  action    String
   createdAt DateTime @default(now())
+  accountId String
+  account   Account  @relation(fields: [accountId], references: [id])
 }

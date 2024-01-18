@@ -1,7 +1,7 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import prisma from "./db";
+import { IAccount } from "@/types";
 
 export const getAllAccount = async () => {
   const data = await prisma.account.findMany({
@@ -27,22 +27,30 @@ export const createAccount = async (name: string, amount: number) => {
   });
 };
 
-export const editAccount = async (id: string, name: string, amount: number) => {
-  await prisma.account.update({
+export const deleteAccount = async (id: string) => {
+  await prisma.accountHistory.deleteMany({
+    where: {
+      accountId: id,
+    },
+  });
+
+  await prisma.account.delete({
     where: {
       id,
-    },
-    data: {
-      name,
-      amount,
     },
   });
 };
 
-export const deleteAccount = async (id: string) => {
-  await prisma.account.delete({
-    where: {
-      id,
+export const createAccountHistory = async (
+  oldAccount: IAccount,
+  amount: number
+) => {
+  await prisma.accountHistory.create({
+    data: {
+      amount,
+      newAmount: oldAccount?.amount + amount,
+      action: "Add",
+      accountId: oldAccount?.id,
     },
   });
 };
@@ -63,5 +71,6 @@ export const addAmount = async (id: string, amount: number) => {
         amount: oldAccount?.amount + amount,
       },
     });
+    await createAccountHistory(oldAccount, amount);
   }
 };
