@@ -76,7 +76,12 @@ export const addAmount = async (id: string, amount: number) => {
 };
 
 export const getAllAccountHistory = async (id: string) => {
-  return await prisma.accountHistory.findMany({
+  const account = await prisma.account.findUnique({
+    where: {
+      id,
+    },
+  });
+  const accountHistory = await prisma.accountHistory.findMany({
     where: {
       accountId: id,
     },
@@ -84,4 +89,6 @@ export const getAllAccountHistory = async (id: string) => {
       createdAt: "desc",
     },
   });
+
+  return { data: accountHistory, accountName: account?.name };
 };
