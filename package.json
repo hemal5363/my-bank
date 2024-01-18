@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "link": "vercel link",
+    "vercel": "vercel env pull .env.development.local",
     "vercel-build": "prisma generate && prisma migrate deploy && next build",
     "prisma": "prisma db pull && prisma generate"
   },
@@ -14,6 +16,7 @@
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-slot": "^1.0.2",
+    "@vercel/postgres": "^0.5.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "lucide-react": "^0.311.0",
@@ -21,7 +24,8 @@
     "react": "^18",
     "react-dom": "^18",
     "tailwind-merge": "^2.2.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "vercel": "^33.1.0"
   },
   "devDependencies": {
     "@prisma/client": "^5.8.1",
