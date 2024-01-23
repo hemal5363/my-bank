@@ -24,9 +24,9 @@ export const PUT = async (
   const id = params.id;
   const data = await req.json();
   try {
-    await Account.findByIdAndUpdate(id, data);
+    const account = await Account.findByIdAndUpdate(id, data);
     return NextResponse.json(
-      { message: "Account updated Successfully" },
+      { message: "Account updated Successfully", data: account },
       { status: 200 }
     );
   } catch (error: any) {

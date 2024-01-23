@@ -5,8 +5,9 @@ export interface IAccount {
 }
 
 export interface IAccountHistory {
-  id: string;
+  _id: string;
   amount: number;
   newAmount: number;
   isCredited: boolean;
+  _account: string;
 }

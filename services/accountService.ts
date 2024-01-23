@@ -1,3 +1,8 @@
+import {
+  createAccountHistory,
+  deleteAllAccountHistoryByAccountId,
+} from "./accountHistoryService";
+
 export const getAllAccount = async () => {
   const jsonData = await fetch("/api/account");
 
@@ -11,6 +16,14 @@ export const getAllAccount = async () => {
   return { data, totalAmount: total };
 };
 
+export const getAccountById = async (id: string) => {
+  const jsonData = await fetch(`/api/account/${id}`);
+
+  const data = await jsonData.json();
+
+  return data;
+};
+
 export const createAccount = async (name: string, amount: number) => {
   const jsonData = await fetch("/api/account", {
     method: "POST",
@@ -22,6 +35,8 @@ export const createAccount = async (name: string, amount: number) => {
 
   const data = await jsonData.json();
 
+  await createAccountHistory(0, amount, true, data.data._id);
+
   return data;
 };
 
@@ -30,9 +45,7 @@ export const updateAccount = async (
   amount: number,
   isCredited: boolean
 ) => {
-  const jsonAccountData = await fetch(`/api/account/${id}`);
-
-  const accountData = (await jsonAccountData.json()).data;
+  const { data: accountData } = await getAccountById(id);
 
   const newAmount = isCredited
     ? accountData.amount + amount
@@ -48,6 +61,8 @@ export const updateAccount = async (
 
   const data = await jsonData.json();
 
+  await createAccountHistory(amount, newAmount, isCredited, id);
+
   return data;
 };
 
@@ -57,6 +72,8 @@ export const deleteAccount = async (id: string) => {
   });
 
   const data = await jsonData.json();
+
+  await deleteAllAccountHistoryByAccountId(id);
 
   return data;
 };
