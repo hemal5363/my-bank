@@ -22,6 +22,7 @@ interface IAddEditAccount {
   buttonName: string;
   doReload: () => void;
   isAddAmount?: boolean;
+  isExpense?: boolean;
   openId?: string;
   selectedAmount?: number;
 }
@@ -30,6 +31,7 @@ const AddEditAccount = ({
   buttonName,
   doReload,
   isAddAmount = false,
+  isExpense = false,
   openId = "",
   selectedAmount = 0,
 }: IAddEditAccount) => {
@@ -51,7 +53,9 @@ const AddEditAccount = ({
   const handleSaveClick = async () => {
     handleOpenChange(false);
     showLoader();
-    if (isAddAmount) {
+    if (isExpense) {
+      await updateAccount(openId, amount, true);
+    } else if (isAddAmount) {
       await updateAccount(openId, amount, isCredited);
     } else {
       await createAccount(name, amount);
@@ -76,32 +80,36 @@ const AddEditAccount = ({
           <DialogTitle>{buttonName}</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          {isAddAmount ? (
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
-                Is Credited
-              </Label>
-              <Checkbox
-                id="terms"
-                className="col-span-3"
-                checked={isCredited}
-                onCheckedChange={(checked) => setCredited(checked as boolean)}
-              />
-            </div>
+          {!isExpense ? (
+            isAddAmount ? (
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right">
+                  Is Credited
+                </Label>
+                <Checkbox
+                  id="terms"
+                  className="col-span-3"
+                  checked={isCredited}
+                  onCheckedChange={(checked) => setCredited(checked as boolean)}
+                />
+              </div>
+            ) : (
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right">
+                  Name
+                </Label>
+                <Input
+                  id="name"
+                  placeholder="Enter name"
+                  className="col-span-3"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+            )
           ) : (
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
-                Name
-              </Label>
-              <Input
-                id="name"
-                placeholder="Enter name"
-                className="col-span-3"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
+            <></>
           )}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="amount" className="text-right">
@@ -124,7 +132,7 @@ const AddEditAccount = ({
             type="submit"
             size="lg"
             onClick={handleSaveClick}
-            disabled={(!name && !isAddAmount) || !amount}
+            disabled={(!name && !isAddAmount && !isExpense) || !amount}
           >
             {buttonName}
           </Button>

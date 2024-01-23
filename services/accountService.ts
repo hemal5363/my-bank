@@ -30,7 +30,7 @@ export const createAccount = async (name: string, amount: number) => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ name, amount }),
+    body: JSON.stringify({ name, amount, isExpense: false }),
   });
 
   const data = await jsonData.json();
@@ -74,6 +74,14 @@ export const deleteAccount = async (id: string) => {
   const data = await jsonData.json();
 
   await deleteAllAccountHistoryByAccountId(id);
+
+  return data;
+};
+
+export const getExpenseAccount = async () => {
+  const jsonData = await fetch("/api/account/expense");
+
+  const { data } = await jsonData.json();
 
   return data;
 };

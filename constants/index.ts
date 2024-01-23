@@ -6,7 +6,7 @@ export const headerLinks = [
   },
   {
     id: "2",
-    title: "My Due",
-    href: "/my-due",
+    title: "My Expense",
+    href: "/my-expense",
   },
 ];

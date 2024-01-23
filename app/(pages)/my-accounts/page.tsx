@@ -60,7 +60,7 @@ const page = () => {
               <TableCell className="text-right">{account.amount}</TableCell>
               <TableCell className="text-right">
                 <Button size="icon" variant="outline" className="rounded-xl">
-                  <Link href={`/my-accounts/${account._id}`}>
+                  <Link href={`/my-account-history/${account._id}`}>
                     <PreviewRoundedIcon color="primary" />
                   </Link>
                 </Button>

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import {
@@ -10,18 +10,20 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { format } from "date-fns";
 import { getAllAccountHistoryByAccountId } from "@/services/accountHistoryService";
 import { useEffect, useState } from "react";
 import { IAccountHistory } from "@/types";
 import { hideLoader, showLoader } from "@/utils/helper";
+import { useRouter } from "next/navigation";
 
 const page = ({ params }: { params: { accountId: string } }) => {
   const [allAccountsHistory, setAllAccountsHistory] = useState<
     IAccountHistory[]
   >([]);
   const [accountName, setAccountName] = useState("");
+
+  const router = useRouter();
 
   useEffect(() => {
     callGetAPI();
@@ -43,10 +45,12 @@ const page = ({ params }: { params: { accountId: string } }) => {
         <h1 className="text-xl font-bold">
           My Accounts History ({accountName})
         </h1>
-        <Button size="icon" className="rounded-xl">
-          <Link href="/my-accounts">
-            <ArrowBackRoundedIcon />
-          </Link>
+        <Button
+          size="icon"
+          className="rounded-xl"
+          onClick={() => router.back()}
+        >
+          <ArrowBackRoundedIcon />
         </Button>
       </div>
       <Table className="mt-5">
