@@ -2,16 +2,20 @@ import mongoose from "mongoose";
 
 const DATABASE_URL = process.env.DATABASE_URL;
 
+let globalWithMongoose = global as typeof globalThis & {
+  mongoose: any;
+};
+
 if (!DATABASE_URL) {
   throw new Error(
     "Please define the DATABASE_URL environment variable inside .env.local"
   );
 }
 
-let cached = global.mongoose;
+let cached = globalWithMongoose.mongoose;
 
 if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
+  cached = globalWithMongoose.mongoose = { conn: null, promise: null };
 }
 
 async function connectDB() {
