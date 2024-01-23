@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
-import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import CurrencyExchangeRoundedIcon from "@mui/icons-material/CurrencyExchangeRounded";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,8 +14,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { addAmount, createAccount } from "@/utils/actions";
 import { hideLoader, showLoader } from "@/utils/helper";
+import { createAccount } from "@/services/accountService";
+import { Checkbox } from "../ui/checkbox";
 
 interface IAddEditAccount {
   buttonName: string;
@@ -36,6 +36,7 @@ const AddEditAccount = ({
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [amount, setAmount] = useState(0);
+  const [isCredited, setCredited] = useState(false);
 
   const handleOpenChange = (change: any) => {
     setOpen(change);
@@ -51,7 +52,7 @@ const AddEditAccount = ({
     handleOpenChange(false);
     showLoader();
     if (isAddAmount) {
-      await addAmount(openId, amount);
+      // await addAmount(openId, amount, isCredited);
     } else {
       await createAccount(name, amount);
     }
@@ -75,7 +76,19 @@ const AddEditAccount = ({
           <DialogTitle>{buttonName}</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          {!isAddAmount && (
+          {isAddAmount ? (
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
+                Is Credited
+              </Label>
+              <Checkbox
+                id="terms"
+                className="col-span-3"
+                checked={isCredited}
+                onCheckedChange={(checked) => setCredited(checked as boolean)}
+              />
+            </div>
+          ) : (
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
                 Name

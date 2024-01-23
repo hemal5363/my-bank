@@ -1,17 +1,35 @@
-import { PrismaClient } from "@prisma/client";
+import mongoose from "mongoose";
 
-const prismaClientSingleton = () => {
-  return new PrismaClient();
-};
+const DATABASE_URL = process.env.DATABASE_URL;
 
-type prismaClientSingleton = ReturnType<typeof prismaClientSingleton>;
+if (!DATABASE_URL) {
+  throw new Error(
+    "Please define the DATABASE_URL environment variable inside .env.local"
+  );
+}
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: prismaClientSingleton | undefined;
-};
+let cached = global.mongoose;
 
-const prisma = globalForPrisma.prisma ?? prismaClientSingleton();
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
 
-export default prisma;
+async function connectDB() {
+  if (cached.conn) {
+    return cached.conn;
+  }
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+  if (!cached.promise) {
+    const opts = {
+      bufferCommands: false,
+    };
+
+    cached.promise = mongoose.connect(DATABASE_URL, opts).then((mongoose) => {
+      return mongoose;
+    });
+  }
+  cached.conn = await cached.promise;
+  return cached.conn;
+}
+
+export default connectDB;

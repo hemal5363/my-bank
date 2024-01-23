@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import AddEditAccount from "@/components/shared/AddEditAccount";
-import { getAllAccount } from "@/utils/actions";
+import { getAllAccount } from "@/services/accountService";
 import DeleteAccount from "@/components/shared/DeleteAccount";
 import { useEffect, useState } from "react";
 import { hideLoader, showLoader } from "@/utils/helper";

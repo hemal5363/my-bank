@@ -48,7 +48,7 @@ const page = async ({ params }: { params: { accountId: string } }) => {
                 {accountsHistory.newAmount}
               </TableCell>
               <TableCell className="text-center">
-                {accountsHistory.action}
+                {accountsHistory.isCredited ? "Credit" : "Debit"}
               </TableCell>
               <TableCell className="text-center">
                 {format(accountsHistory.createdAt, "dd/MM/yyy hh:mm")}

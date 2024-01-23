@@ -8,5 +8,5 @@ export interface IAccountHistory {
   id: string;
   amount: number;
   newAmount: number;
-  action: string;
+  isCredited: boolean;
 }
