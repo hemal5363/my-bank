@@ -26,11 +26,15 @@ async function connectDB() {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
+      useUnifiedTopology: true,
+      useNewUrlParser: true,
     };
 
-    cached.promise = mongoose.connect(DATABASE_URL as string, opts).then((mongoose) => {
-      return mongoose;
-    });
+    cached.promise = mongoose
+      .connect(DATABASE_URL as string, opts)
+      .then((mongoose) => {
+        return mongoose;
+      });
   }
   cached.conn = await cached.promise;
   return cached.conn;
