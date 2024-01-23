@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { hideLoader, showLoader } from "@/utils/helper";
-import { createAccount } from "@/services/accountService";
+import { createAccount, updateAccount } from "@/services/accountService";
 import { Checkbox } from "../ui/checkbox";
 
 interface IAddEditAccount {
@@ -52,7 +52,7 @@ const AddEditAccount = ({
     handleOpenChange(false);
     showLoader();
     if (isAddAmount) {
-      // await addAmount(openId, amount, isCredited);
+      await updateAccount(openId, amount, isCredited);
     } else {
       await createAccount(name, amount);
     }

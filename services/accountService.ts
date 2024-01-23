@@ -1,7 +1,7 @@
 export const getAllAccount = async () => {
   const jsonData = await fetch("/api/account");
 
-  const data = await jsonData.json();
+  const { data } = await jsonData.json();
 
   let total = 0;
   data.forEach((account: any) => {
@@ -20,11 +20,43 @@ export const createAccount = async (name: string, amount: number) => {
     body: JSON.stringify({ name, amount }),
   });
 
-  return jsonData;
+  const data = await jsonData.json();
 
-  //   await createAccountHistory(
-  //     { id: newAccount.id, amount: 0, name: newAccount.name },
-  //     amount,
-  //     true
-  //   );
+  return data;
+};
+
+export const updateAccount = async (
+  id: string,
+  amount: number,
+  isCredited: boolean
+) => {
+  const jsonAccountData = await fetch(`/api/account/${id}`);
+
+  const accountData = (await jsonAccountData.json()).data;
+
+  const newAmount = isCredited
+    ? accountData.amount + amount
+    : accountData.amount - amount;
+
+  const jsonData = await fetch(`/api/account/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ amount: newAmount }),
+  });
+
+  const data = await jsonData.json();
+
+  return data;
+};
+
+export const deleteAccount = async (id: string) => {
+  const jsonData = await fetch(`/api/account/${id}`, {
+    method: "DELETE",
+  });
+
+  const data = await jsonData.json();
+
+  return data;
 };

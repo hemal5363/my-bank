@@ -6,9 +6,9 @@ export const GET = async () => {
   await connectDB();
   try {
     const accounts = await Account.find();
-    return NextResponse.json(accounts);
+    return NextResponse.json({ data: accounts }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ message: error }, { status: 500 });
+    return NextResponse.json({ error }, { status: 500 });
   }
 };
 
@@ -16,9 +16,12 @@ export const POST = async (req: NextRequest) => {
   await connectDB();
   const data = await req.json();
   try {
-    const account = await Account.create(data);
-    return NextResponse.json(account);
-  } catch (error: any) {
-    return NextResponse.json({ message: error  }, { status: 500 });
+    await Account.create(data);
+    return NextResponse.json(
+      { message: "Account Created Successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json({ error }, { status: 500 });
   }
 };

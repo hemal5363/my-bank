@@ -55,12 +55,12 @@ const page = () => {
         </TableHeader>
         <TableBody>
           {allAccounts.map((account) => (
-            <TableRow key={account.id}>
+            <TableRow key={account._id}>
               <TableCell className="font-medium">{account.name}</TableCell>
               <TableCell className="text-right">{account.amount}</TableCell>
               <TableCell className="text-right">
                 <Button size="icon" variant="outline" className="rounded-xl">
-                  <Link href={`/my-accounts/${account.id}`}>
+                  <Link href={`/my-accounts/${account._id}`}>
                     <PreviewRoundedIcon color="primary" />
                   </Link>
                 </Button>
@@ -70,11 +70,11 @@ const page = () => {
                   buttonName="Add Amount"
                   isAddAmount
                   doReload={doReload}
-                  openId={account.id}
+                  openId={account._id}
                 />
               </TableCell>
               <TableCell className="text-right">
-                <DeleteAccount accountId={account.id} doReload={doReload} />
+                <DeleteAccount accountId={account._id} doReload={doReload} />
               </TableCell>
             </TableRow>
           ))}

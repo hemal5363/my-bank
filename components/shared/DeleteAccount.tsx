@@ -2,9 +2,9 @@
 
 import RemoveCircleOutlineRoundedIcon from '@mui/icons-material/RemoveCircleOutlineRounded';
 
-// import { deleteAccount } from "@/utils/actions";
 import { Button } from "@/components/ui/button";
 import { hideLoader, showLoader } from "@/utils/helper";
+import { deleteAccount } from '@/services/accountService';
 
 const DeleteAccount = ({
   accountId,
@@ -15,7 +15,7 @@ const DeleteAccount = ({
 }) => {
   const handleDeleteClick = async (id: string) => {
     showLoader();
-    // await deleteAccount(id);
+    await deleteAccount(id);
     hideLoader();
     doReload();
   };
