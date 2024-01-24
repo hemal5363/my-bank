@@ -2,8 +2,9 @@ import Account from "@/models/Account";
 import connectDB from "@/utils/db";
 import { NextResponse } from "next/server";
 
-export const GET = async () => {
+export const GET = async ({ params }: { params: { id: string } }) => {
   await connectDB();
+  console.log("params", params);
   try {
     const accounts = await Account.find();
     return NextResponse.json(
