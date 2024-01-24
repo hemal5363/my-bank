@@ -8,18 +8,54 @@ import { getExpenseAccount } from "@/services/expenseAccountService";
 import { getAllAccount } from "@/services/accountService";
 import AccountHistoryTable from "@/components/shared/AccountHistoryTable";
 import { getAllAccountHistoryByAccountId } from "@/services/accountHistoryService";
+import DateRangePicker from "@/components/shared/DateRangePicker";
+import { DateRange } from "react-day-picker";
 
 const page = () => {
   const [allAccounts, setAllAccounts] = useState<IAccount[]>([]);
   const [allAccountsHistory, setAllAccountsHistory] = useState<
     IAccountHistory[]
   >([]);
+  const [filterAccountsHistory, setFilterAccountsHistory] = useState<
+    IAccountHistory[]
+  >([]);
   const [expenseData, setExpenseData] = useState<IAccount>();
+  const [totalExpense, setTotalExpense] = useState(0);
   const [isReload, setReload] = useState(false);
+  const [dateRange, setDateRange] = useState<DateRange>();
 
   useEffect(() => {
     callGetAPI();
   }, [isReload]);
+
+  useEffect(() => {
+    if (dateRange) {
+      let accountHistory: IAccountHistory[] = [];
+      if (dateRange.from) {
+        accountHistory = allAccountsHistory.filter(
+          (history) =>
+            new Date(history.createdAt) > new Date(dateRange.from as Date)
+        );
+      }
+      if (dateRange.to) {
+        accountHistory = accountHistory.filter(
+          (history) =>
+            new Date(history.createdAt) <= new Date(dateRange.to as Date)
+        );
+      }
+
+      let total = 0;
+      accountHistory
+        .filter((account) => !account.isCredited)
+        .forEach((account: any) => {
+          total = total + account.amount;
+        });
+      setTotalExpense(total);
+      setFilterAccountsHistory(accountHistory);
+    } else {
+      setFilterAccountsHistory(allAccountsHistory);
+    }
+  }, [dateRange, allAccountsHistory]);
 
   const callGetAPI = async () => {
     showLoader();
@@ -61,7 +97,18 @@ const page = () => {
           accountList={allAccounts}
         />
       </div>
-      <AccountHistoryTable allAccountsHistory={allAccountsHistory} />
+      <div className="mt-5 sm:flex grid items-center gap-5">
+        <DateRangePicker
+          placeholder="Select date range"
+          onChange={setDateRange}
+        />
+        {totalExpense ? (
+          <div className="text-destructive">Total Expense : {totalExpense}</div>
+        ) : (
+          <></>
+        )}
+      </div>
+      <AccountHistoryTable allAccountsHistory={filterAccountsHistory} />
     </div>
   );
 };
