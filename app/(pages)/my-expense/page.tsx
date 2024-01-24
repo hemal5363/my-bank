@@ -1,27 +1,19 @@
 "use client";
 
-import PreviewRoundedIcon from "@mui/icons-material/PreviewRounded";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import AddEditAccount from "@/components/shared/AddEditAccount";
-import { getExpenseAccount } from "@/services/accountService";
-import DeleteAccount from "@/components/shared/DeleteAccount";
 import { useEffect, useState } from "react";
 import { hideLoader, showLoader } from "@/utils/helper";
-import { IAccount } from "@/types";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { IAccount, IAccountHistory } from "@/types";
+import { getExpenseAccount } from "@/services/expenseAccountService";
+import { getAllAccount } from "@/services/accountService";
+import AccountHistoryTable from "@/components/shared/AccountHistoryTable";
+import { getAllAccountHistoryByAccountId } from "@/services/accountHistoryService";
 
 const page = () => {
-  // const [allAccounts, setAllAccounts] = useState<IAccount[]>([]);
-  // const [total, setTotal] = useState(0);
+  const [allAccounts, setAllAccounts] = useState<IAccount[]>([]);
+  const [allAccountsHistory, setAllAccountsHistory] = useState<
+    IAccountHistory[]
+  >([]);
   const [expenseData, setExpenseData] = useState<IAccount>();
   const [isReload, setReload] = useState(false);
 
@@ -32,9 +24,13 @@ const page = () => {
   const callGetAPI = async () => {
     showLoader();
     const data = await getExpenseAccount();
+    const { data: accountData } = await getAllAccount();
+    const {
+      data: { data: accountHistoryData },
+    } = await getAllAccountHistoryByAccountId(data._id);
     setExpenseData(data);
-    // setAllAccounts(data);
-    // setTotal(totalAmount);
+    setAllAccounts(accountData);
+    setAllAccountsHistory(accountHistoryData);
     hideLoader();
   };
 
@@ -51,61 +47,21 @@ const page = () => {
           isExpense
           doReload={doReload}
           openId={expenseData?._id}
+          accountList={allAccounts}
         />
       </div>
       <div className="flex sm:flex-row justify-between items-center gap-4">
         <h1 className="text-xl font-bold">{expenseData?.amount}</h1>
-        <Button size="icon" variant="outline" className="rounded-xl">
-          <Link href={`/my-account-history/${expenseData?._id}`}>
-            <PreviewRoundedIcon color="primary" />
-          </Link>
-        </Button>
+        <AddEditAccount
+          buttonName="Add Amount"
+          isAddAmount
+          isExpenseDebit
+          doReload={doReload}
+          openId={expenseData?._id}
+          accountList={allAccounts}
+        />
       </div>
-      <Table className="mt-5">
-        <TableHeader>
-          <TableRow>
-            <TableHead className="text-xl">Account Name</TableHead>
-            <TableHead className="text-right text-xl">Amount</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {/* {allAccounts.map((account) => (
-            <TableRow key={account._id}>
-              <TableCell className="font-medium">{account.name}</TableCell>
-              <TableCell className="text-right">{account.amount}</TableCell>
-              <TableCell className="text-right">
-                <Button size="icon" variant="outline" className="rounded-xl">
-                  <Link href={`/my-accounts/${account._id}`}>
-                    <PreviewRoundedIcon color="primary" />
-                  </Link>
-                </Button>
-              </TableCell>
-              <TableCell className="text-right">
-                <AddEditAccount
-                  buttonName="Add Amount"
-                  isAddAmount
-                  doReload={doReload}
-                  openId={account._id}
-                />
-              </TableCell>
-              <TableCell className="text-right">
-                <DeleteAccount accountId={account._id} doReload={doReload} />
-              </TableCell>
-            </TableRow>
-          ))} */}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell className="text-base font-bold">Total</TableCell>
-            <TableCell className="text-right font-bold text-base">
-              {/* {total} */}
-            </TableCell>
-            <TableCell className="text-base font-bold"></TableCell>
-            <TableCell className="text-base font-bold"></TableCell>
-            <TableCell className="text-base font-bold"></TableCell>
-          </TableRow>
-        </TableFooter>
-      </Table>
+      <AccountHistoryTable allAccountsHistory={allAccountsHistory} />
     </div>
   );
 };

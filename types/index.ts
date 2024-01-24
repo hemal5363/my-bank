@@ -10,4 +10,5 @@ export interface IAccountHistory {
   newAmount: number;
   isCredited: boolean;
   _account: string;
+  createdAt: Date;
 }

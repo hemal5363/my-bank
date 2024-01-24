@@ -17,14 +17,26 @@ import { Label } from "@/components/ui/label";
 import { hideLoader, showLoader } from "@/utils/helper";
 import { createAccount, updateAccount } from "@/services/accountService";
 import { Checkbox } from "../ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { IAccount } from "@/types";
+import { updateExpenseAccount } from "@/services/expenseAccountService";
 
 interface IAddEditAccount {
   buttonName: string;
   doReload: () => void;
   isAddAmount?: boolean;
   isExpense?: boolean;
+  isExpenseDebit?: boolean;
   openId?: string;
   selectedAmount?: number;
+  accountList?: IAccount[];
 }
 
 const AddEditAccount = ({
@@ -32,12 +44,15 @@ const AddEditAccount = ({
   doReload,
   isAddAmount = false,
   isExpense = false,
+  isExpenseDebit = false,
   openId = "",
   selectedAmount = 0,
+  accountList,
 }: IAddEditAccount) => {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [amount, setAmount] = useState(0);
+  const [accountId, setAccountId] = useState("");
   const [isCredited, setCredited] = useState(false);
 
   const handleOpenChange = (change: any) => {
@@ -54,7 +69,7 @@ const AddEditAccount = ({
     handleOpenChange(false);
     showLoader();
     if (isExpense) {
-      await updateAccount(openId, amount, true);
+      await updateExpenseAccount(openId, amount, accountId);
     } else if (isAddAmount) {
       await updateAccount(openId, amount, isCredited);
     } else {
@@ -83,14 +98,15 @@ const AddEditAccount = ({
           {!isExpense ? (
             isAddAmount ? (
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">
+                <Label htmlFor="isCredited" className="text-right">
                   Is Credited
                 </Label>
                 <Checkbox
-                  id="terms"
+                  id="isCredited"
                   className="col-span-3"
-                  checked={isCredited}
+                  checked={isExpenseDebit ? false : isCredited}
                   onCheckedChange={(checked) => setCredited(checked as boolean)}
+                  disabled={isExpenseDebit}
                 />
               </div>
             ) : (
@@ -109,7 +125,25 @@ const AddEditAccount = ({
               </div>
             )
           ) : (
-            <></>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="from" className="text-right">
+                From
+              </Label>
+              <Select onValueChange={(v) => setAccountId(v)}>
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Select bank account" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {accountList?.map((list) => (
+                      <SelectItem value={list._id}>
+                        {list.name} ({list.amount})
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
           )}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="amount" className="text-right">
@@ -132,7 +166,11 @@ const AddEditAccount = ({
             type="submit"
             size="lg"
             onClick={handleSaveClick}
-            disabled={(!name && !isAddAmount && !isExpense) || !amount}
+            disabled={
+              (!name && !isAddAmount && !isExpense) ||
+              !amount ||
+              (isExpense && !accountId)
+            }
           >
             {buttonName}
           </Button>

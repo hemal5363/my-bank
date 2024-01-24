@@ -1,21 +1,14 @@
 "use client";
 
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+
 import { Button } from "@/components/ui/button";
-import { format } from "date-fns";
 import { getAllAccountHistoryByAccountId } from "@/services/accountHistoryService";
 import { useEffect, useState } from "react";
 import { IAccountHistory } from "@/types";
 import { hideLoader, showLoader } from "@/utils/helper";
 import { useRouter } from "next/navigation";
+import AccountHistoryTable from "@/components/shared/AccountHistoryTable";
 
 const page = ({ params }: { params: { accountId: string } }) => {
   const [allAccountsHistory, setAllAccountsHistory] = useState<
@@ -53,34 +46,7 @@ const page = ({ params }: { params: { accountId: string } }) => {
           <ArrowBackRoundedIcon />
         </Button>
       </div>
-      <Table className="mt-5">
-        <TableHeader>
-          <TableRow>
-            <TableHead className="text-center text-xl">Amount</TableHead>
-            <TableHead className="text-center text-xl">New Amount</TableHead>
-            <TableHead className="text-center text-xl">Action</TableHead>
-            <TableHead className="text-center text-xl">Date & Time</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {allAccountsHistory.map((accountsHistory: any) => (
-            <TableRow key={accountsHistory.id}>
-              <TableCell className="text-center">
-                {accountsHistory.amount}
-              </TableCell>
-              <TableCell className="text-center">
-                {accountsHistory.newAmount}
-              </TableCell>
-              <TableCell className="text-center">
-                {accountsHistory.isCredited ? "Credit" : "Debit"}
-              </TableCell>
-              <TableCell className="text-center">
-                {format(accountsHistory.createdAt, "dd/MM/yyy hh:mm")}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <AccountHistoryTable allAccountsHistory={allAccountsHistory} />
     </div>
   );
 };

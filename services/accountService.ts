@@ -77,11 +77,3 @@ export const deleteAccount = async (id: string) => {
 
   return data;
 };
-
-export const getExpenseAccount = async () => {
-  const jsonData = await fetch("/api/account/expense");
-
-  const { data } = await jsonData.json();
-
-  return data;
-};
