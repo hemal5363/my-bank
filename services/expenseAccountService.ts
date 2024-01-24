@@ -1,7 +1,7 @@
 import { updateAccount } from "./accountService";
 
 export const getExpenseAccount = async () => {
-  const jsonData = await fetch("/api/expense");
+  const jsonData = await fetch("/api/expense/expense");
 
   const { data } = await jsonData.json();
 
