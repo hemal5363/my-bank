@@ -1,10 +1,11 @@
+"use client"
+
 import Account from "@/models/Account";
 import connectDB from "@/utils/db";
 import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async (req: NextRequest) => {
+export const GET = async () => {
   await connectDB();
-  console.log("req", req);
   try {
     const accounts = await Account.find();
     return NextResponse.json(
