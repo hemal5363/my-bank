@@ -1,14 +1,18 @@
-import AccountBalanceRoundedIcon from '@mui/icons-material/AccountBalanceRounded';
+"use client";
+
+import AccountBalanceRoundedIcon from "@mui/icons-material/AccountBalanceRounded";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Separator } from "../ui/separator";
 import NavItems from "./NavItems";
 import Link from "next/link";
+import { useState } from "react";
 
 const MobileNav = () => {
+  const [isOpen, setOpen] = useState(false);
   return (
     <nav className="md:hidden">
-      <Sheet>
+      <Sheet open={isOpen} onOpenChange={setOpen}>
         <SheetTrigger className="align-middle">
           <MenuIcon />
         </SheetTrigger>
@@ -16,12 +20,13 @@ const MobileNav = () => {
           <Link
             href="/"
             className="w-44 h5-bold text-primary gap-5 flex-center"
+            onClick={() => setOpen(false)}
           >
             <AccountBalanceRoundedIcon fontSize="large" />
             My Bank
           </Link>
           <Separator className="border border-gray-50" />
-          <NavItems />
+          <NavItems setOpen={setOpen} />
         </SheetContent>
       </Sheet>
     </nav>
