@@ -15,7 +15,7 @@ const AccountHistoryTable = ({
   allAccountsHistory: IAccountHistory[];
 }) => {
   return (
-    <Table className="mt-5">
+    <Table>
       <TableHeader className="[&_tr]:border-b-0">
         <TableRow className="bg-cyan-100 hover:bg-cyan-300 whitespace-nowrap">
           <TableHead className="text-center text-xl rounded-bl-3xl rounded-tl-3xl">

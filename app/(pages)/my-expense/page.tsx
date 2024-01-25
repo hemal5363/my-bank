@@ -98,7 +98,7 @@ const page = () => {
           accountList={allAccounts}
         />
       </div>
-      <div className="mt-5 sm:flex grid items-center gap-5">
+      <div className="my-5 sm:flex grid items-center gap-5">
         <DateRangePicker
           placeholder="Select date range"
           onChange={setDateRange}
