@@ -17,7 +17,7 @@ const AccountHistoryTable = ({
   return (
     <Table className="mt-5">
       <TableHeader className="[&_tr]:border-b-0">
-        <TableRow className="bg-cyan-300 hover:bg-cyan-100 whitespace-nowrap">
+        <TableRow className="bg-cyan-100 hover:bg-cyan-300 whitespace-nowrap">
           <TableHead className="text-center text-xl rounded-bl-3xl rounded-tl-3xl">
             Amount
           </TableHead>
@@ -34,8 +34,8 @@ const AccountHistoryTable = ({
             key={accountsHistory._id}
             className={`border-b-0 ${
               accountsHistory.isCredited
-                ? "bg-green-300 hover:bg-green-100"
-                : "bg-rose-300 hover:bg-rose-100"
+                ? "bg-green-100 hover:bg-green-300"
+                : "bg-rose-100 hover:bg-rose-300"
             }`}
           >
             <TableCell className="text-center rounded-bl-3xl rounded-tl-3xl">

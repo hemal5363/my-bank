@@ -54,6 +54,7 @@ const page = () => {
       setFilterAccountsHistory(accountHistory);
     } else {
       setFilterAccountsHistory(allAccountsHistory);
+      setTotalExpense(0);
     }
   }, [dateRange, allAccountsHistory]);
 
