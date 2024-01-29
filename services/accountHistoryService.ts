@@ -1,13 +1,15 @@
-import { getAccountById } from "./accountService";
+export const getAllAccountHistoryByAccountId = async (
+  accountId: string,
+  fromDate: Date | undefined,
+  toDate: Date | undefined
+) => {
+  const jsonData = await fetch(
+    `/api/accountHistory/accountId/${accountId}?fromDate=${fromDate}&toDate=${toDate}`
+  );
 
-export const getAllAccountHistoryByAccountId = async (accountId: string) => {
-  const jsonData = await fetch(`/api/accountHistory/accountId/${accountId}`);
+  const data = await jsonData.json();
 
-  const { data } = await jsonData.json();
-
-  const accountData = await getAccountById(accountId);
-
-  return { data, accountName: accountData.name };
+  return data;
 };
 
 export const createAccountHistory = async (

@@ -1,4 +1,5 @@
 import Account from "@/models/Account";
+import AccountHistory from "@/models/AccountHistory";
 import connectDB from "@/utils/db";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -22,11 +23,30 @@ export const PUT = async (
 ) => {
   await connectDB();
   const id = params.id;
-  const data = await req.json();
+  const data: any = await req.json();
   try {
-    const account = await Account.findByIdAndUpdate(id, data);
+    const account = await Account.findById(id);
+
+    const newAmount = data.isCredited
+      ? account.amount + data.amount
+      : account.amount - data.amount;
+
+    const newAccount = await Account.findByIdAndUpdate(id, {
+      amount: newAmount,
+    });
+
+    const accountHistory = await AccountHistory.create({
+      amount: data.amount,
+      newAmount,
+      isCredited: data.isCredited,
+      _account: id,
+    });
+
     return NextResponse.json(
-      { message: "Account updated Successfully", data: account },
+      {
+        message: "Account updated Successfully",
+        data: { ...newAccount._doc, history: accountHistory },
+      },
       { status: 200 }
     );
   } catch (error: any) {
@@ -42,6 +62,7 @@ export const DELETE = async (
   const id = params.id;
   try {
     await Account.findByIdAndDelete(id);
+    await AccountHistory.deleteMany({ _account: id });
     return NextResponse.json(
       { message: "Account deleted Successfully" },
       { status: 200 }

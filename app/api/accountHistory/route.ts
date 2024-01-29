@@ -4,8 +4,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async () => {
   await connectDB();
+
   try {
-    const AccountHistories = await AccountHistory.find().sort({createdAt: -1});
+    const AccountHistories = await AccountHistory.find().sort({
+      createdAt: -1,
+    });
     return NextResponse.json({ data: AccountHistories }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });

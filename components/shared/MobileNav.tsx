@@ -8,7 +8,7 @@ import NavItems from "./NavItems";
 import Link from "next/link";
 import { useState } from "react";
 
-const MobileNav = () => {
+const MobileNav = ({ expenseId }: { expenseId: string }) => {
   const [isOpen, setOpen] = useState(false);
   return (
     <nav className="md:hidden">
@@ -26,7 +26,7 @@ const MobileNav = () => {
             My Bank
           </Link>
           <Separator className="border border-gray-50" />
-          <NavItems setOpen={setOpen} />
+          <NavItems setOpen={setOpen} expenseId={expenseId} />
         </SheetContent>
       </Sheet>
     </nav>

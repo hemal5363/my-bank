@@ -4,7 +4,8 @@ import AccountBalanceRoundedIcon from "@mui/icons-material/AccountBalanceRounded
 import NavItems from "./NavItems";
 import MobileNav from "./MobileNav";
 
-const Header = () => {
+const Header = async () => {
+  const expenseId = (await process.env.EXPENSE_ID) as string;
   return (
     <header className="w-full border-b">
       <div className="wrapper flex items-center justify-between">
@@ -14,11 +15,11 @@ const Header = () => {
         </Link>
 
         <nav className="md:flex-between hidden w-full max-w-xs">
-          <NavItems />
+          <NavItems expenseId={expenseId} />
         </nav>
 
         <div className="flex w-32 justify-end gap-3">
-          <MobileNav />
+          <MobileNav expenseId={expenseId} />
         </div>
       </div>
     </header>

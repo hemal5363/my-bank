@@ -13,12 +13,13 @@ import { Separator } from "../ui/separator";
 const DateRangePicker = ({
   placeholder,
   onChange,
+  date,
 }: {
   placeholder: string;
   onChange: (date: DateRange | undefined) => void;
+  date: DateRange | undefined;
 }) => {
   const [isOpen, setOpen] = useState(false);
-  const [date, setDate] = useState<DateRange | undefined>();
 
   return (
     <div className={cn("grid gap-2")}>
@@ -55,7 +56,6 @@ const DateRangePicker = ({
             defaultMonth={date?.from}
             selected={date}
             onSelect={(d) => {
-              setDate(d);
               setOpen(false);
               onChange(d);
             }}

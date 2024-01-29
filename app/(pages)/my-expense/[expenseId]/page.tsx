@@ -4,74 +4,47 @@ import AddEditAccount from "@/components/shared/AddEditAccount";
 import { useEffect, useState } from "react";
 import { hideLoader, showLoader } from "@/utils/helper";
 import { IAccount, IAccountHistory } from "@/types";
-import { getAllAccount, getExpenseAccount } from "@/services/accountService";
+import { getAllAccount } from "@/services/accountService";
 import AccountHistoryTable from "@/components/shared/AccountHistoryTable";
 import { getAllAccountHistoryByAccountId } from "@/services/accountHistoryService";
 import DateRangePicker from "@/components/shared/DateRangePicker";
 import { DateRange } from "react-day-picker";
 
-const page = () => {
+const page = ({ params }: { params: { expenseId: string } }) => {
   const [allAccounts, setAllAccounts] = useState<IAccount[]>([]);
   const [allAccountsHistory, setAllAccountsHistory] = useState<
     IAccountHistory[]
   >([]);
-  const [filterAccountsHistory, setFilterAccountsHistory] = useState<
-    IAccountHistory[]
-  >([]);
   const [expenseData, setExpenseData] = useState<IAccount>();
   const [totalExpense, setTotalExpense] = useState(0);
-  const [isReload, setReload] = useState(false);
-  const [dateRange, setDateRange] = useState<DateRange>();
+  const [dateRange, setDate] = useState<DateRange | undefined>();
 
   useEffect(() => {
-    callGetAPI();
-  }, [isReload]);
+    getReloadAPICall();
+  }, []);
 
-  useEffect(() => {
-    if (dateRange) {
-      let accountHistory: IAccountHistory[] = [];
-      if (dateRange.from) {
-        accountHistory = allAccountsHistory.filter(
-          (history) =>
-            new Date(history.createdAt) > new Date(dateRange.from as Date)
-        );
-      }
-      if (dateRange.to) {
-        accountHistory = accountHistory.filter(
-          (history) =>
-            new Date(history.createdAt) <= new Date(dateRange.to as Date)
-        );
-      }
-
-      let total = 0;
-      accountHistory
-        .filter((account) => !account.isCredited)
-        .forEach((account: any) => {
-          total = total + account.amount;
-        });
-      setTotalExpense(total);
-      setFilterAccountsHistory(accountHistory);
-    } else {
-      setFilterAccountsHistory(allAccountsHistory);
-      setTotalExpense(0);
-    }
-  }, [dateRange, allAccountsHistory]);
-
-  const callGetAPI = async () => {
-    showLoader();
-    const data = await getExpenseAccount();
-    const { data: accountData } = await getAllAccount();
-    const { data: accountHistoryData } = await getAllAccountHistoryByAccountId(
-      data._id
+  const getAccountHistoryAPICall = async (date?: DateRange | undefined) => {
+    setDate(date)
+    const {
+      data: accountHistoryData,
+      account,
+      totalAmount,
+    } = await getAllAccountHistoryByAccountId(
+      params.expenseId,
+      date?.from,
+      date?.to
     );
-    setExpenseData(data);
-    setAllAccounts(accountData);
+    setExpenseData(account);
     setAllAccountsHistory(accountHistoryData);
-    hideLoader();
+    setTotalExpense(totalAmount);
   };
 
-  const doReload = () => {
-    setReload(!isReload);
+  const getReloadAPICall = async () => {
+    showLoader();
+    await getAccountHistoryAPICall();
+    const { data: accountData } = await getAllAccount();
+    setAllAccounts(accountData);
+    hideLoader();
   };
 
   return (
@@ -81,7 +54,7 @@ const page = () => {
         <AddEditAccount
           buttonName="Add Amount"
           isExpense
-          doReload={doReload}
+          doReload={getReloadAPICall}
           openId={expenseData?._id}
           accountList={allAccounts}
         />
@@ -92,7 +65,7 @@ const page = () => {
           buttonName="Add Amount"
           isAddAmount
           isExpenseDebit
-          doReload={doReload}
+          doReload={getAccountHistoryAPICall}
           openId={expenseData?._id}
           accountList={allAccounts}
         />
@@ -100,7 +73,8 @@ const page = () => {
       <div className="my-5 sm:flex grid items-center gap-5">
         <DateRangePicker
           placeholder="Select date range"
-          onChange={setDateRange}
+          onChange={getAccountHistoryAPICall}
+          date={dateRange}
         />
         {totalExpense ? (
           <div className="text-destructive">Total Expense : {totalExpense}</div>
@@ -108,7 +82,7 @@ const page = () => {
           <></>
         )}
       </div>
-      <AccountHistoryTable allAccountsHistory={filterAccountsHistory} />
+      <AccountHistoryTable allAccountsHistory={allAccountsHistory} />
     </div>
   );
 };

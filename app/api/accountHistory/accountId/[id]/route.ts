@@ -1,3 +1,4 @@
+import Account from "@/models/Account";
 import AccountHistory from "@/models/AccountHistory";
 import connectDB from "@/utils/db";
 import { NextRequest, NextResponse } from "next/server";
@@ -8,9 +9,54 @@ export const GET = async (
 ) => {
   await connectDB();
   const id = params.id;
+  const url = new URL(req.url);
+  const fromDate = url.searchParams.get("fromDate");
+  const toDate = url.searchParams.get("toDate");
+
+  let matchCreatedAt = {};
+  if (fromDate !== "undefined" && toDate !== "undefined") {
+    matchCreatedAt = {
+      createdAt: {
+        $gte: fromDate,
+        $lte: toDate,
+      },
+      _account: id,
+    };
+  } else if (fromDate !== "undefined") {
+    matchCreatedAt = {
+      createdAt: {
+        $gte: fromDate,
+      },
+      _account: id,
+    };
+  } else if (toDate !== "undefined") {
+    matchCreatedAt = {
+      createdAt: {
+        $lte: toDate,
+      },
+      _account: id,
+    };
+  } else {
+    matchCreatedAt = {
+      _account: id,
+    };
+  }
   try {
-    const accountHistory = await AccountHistory.find({ _account: id }).sort({createdAt: -1});
-    return NextResponse.json({ data: accountHistory }, { status: 200 });
+    const accountHistory = await AccountHistory.find(matchCreatedAt).sort({
+      createdAt: -1,
+    });
+    const account = await Account.findById(id);
+
+    let total = 0;
+    accountHistory
+      .filter((account: any) => !account.isCredited)
+      .forEach((account: any) => {
+        total = total + account.amount;
+      });
+    return NextResponse.json(
+      { data: accountHistory, account, totalAmount: total },
+      { status: 200 }
+    );
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });
   }
