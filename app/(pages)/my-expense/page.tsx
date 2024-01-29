@@ -4,8 +4,7 @@ import AddEditAccount from "@/components/shared/AddEditAccount";
 import { useEffect, useState } from "react";
 import { hideLoader, showLoader } from "@/utils/helper";
 import { IAccount, IAccountHistory } from "@/types";
-import { getExpenseAccount } from "@/services/expenseAccountService";
-import { getAllAccount } from "@/services/accountService";
+import { getAllAccount, getExpenseAccount } from "@/services/accountService";
 import AccountHistoryTable from "@/components/shared/AccountHistoryTable";
 import { getAllAccountHistoryByAccountId } from "@/services/accountHistoryService";
 import DateRangePicker from "@/components/shared/DateRangePicker";
@@ -62,9 +61,9 @@ const page = () => {
     showLoader();
     const data = await getExpenseAccount();
     const { data: accountData } = await getAllAccount();
-    const {
-      data: { data: accountHistoryData },
-    } = await getAllAccountHistoryByAccountId(data._id);
+    const { data: accountHistoryData } = await getAllAccountHistoryByAccountId(
+      data._id
+    );
     setExpenseData(data);
     setAllAccounts(accountData);
     setAllAccountsHistory(accountHistoryData);

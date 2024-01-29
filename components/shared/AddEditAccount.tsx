@@ -15,7 +15,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { hideLoader, showLoader } from "@/utils/helper";
-import { createAccount, updateAccount } from "@/services/accountService";
+import {
+  createAccount,
+  updateAccount,
+  updateExpenseAccount,
+} from "@/services/accountService";
 import { Checkbox } from "../ui/checkbox";
 import {
   Select,
@@ -26,7 +30,6 @@ import {
   SelectValue,
 } from "../ui/select";
 import { IAccount } from "@/types";
-import { updateExpenseAccount } from "@/services/expenseAccountService";
 
 interface IAddEditAccount {
   buttonName: string;

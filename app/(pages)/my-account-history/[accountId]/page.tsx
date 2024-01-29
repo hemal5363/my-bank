@@ -27,7 +27,7 @@ const page = ({ params }: { params: { accountId: string } }) => {
     const { data, accountName } = await getAllAccountHistoryByAccountId(
       params.accountId
     );
-    setAllAccountsHistory(data.data);
+    setAllAccountsHistory(data);
     setAccountName(accountName);
     hideLoader();
   };

@@ -2,10 +2,17 @@ import Account from "@/models/Account";
 import connectDB from "@/utils/db";
 import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async () => {
+export const GET = async (req: NextRequest) => {
   await connectDB();
+  const url = new URL(req.url);
+  const isExpense = url.searchParams.get("isExpense");
+  const isDue = url.searchParams.get("isDue");
+  
   try {
-    const accounts = await Account.find({ isExpense: false }).sort({
+    const accounts = await Account.find({
+      isExpense: isExpense === "true",
+      isDue: isDue === "true",
+    }).sort({
       createdAt: -1,
     });
     return NextResponse.json({ data: accounts }, { status: 200 });
