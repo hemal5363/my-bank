@@ -35,6 +35,7 @@ interface IAddEditAccount {
   buttonName: string;
   doReload: () => void;
   isAddAmount?: boolean;
+  isDue?: boolean;
   isExpense?: boolean;
   isExpenseDebit?: boolean;
   openId?: string;
@@ -46,6 +47,7 @@ const AddEditAccount = ({
   buttonName,
   doReload,
   isAddAmount = false,
+  isDue = false,
   isExpense = false,
   isExpenseDebit = false,
   openId = "",
@@ -76,7 +78,7 @@ const AddEditAccount = ({
     } else if (isAddAmount) {
       await updateAccount(openId, amount, isCredited);
     } else {
-      await createAccount(name, amount);
+      await createAccount(name, isDue ? -amount : amount, isDue);
     }
     hideLoader();
     doReload();

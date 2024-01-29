@@ -9,4 +9,9 @@ export const headerLinks = [
     title: "My Expense",
     href: "/my-expense",
   },
+  {
+    id: "3",
+    title: "My Due",
+    href: "/my-due",
+  },
 ];

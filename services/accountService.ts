@@ -3,8 +3,8 @@ import {
   deleteAllAccountHistoryByAccountId,
 } from "./accountHistoryService";
 
-export const getAllAccount = async () => {
-  const jsonData = await fetch("/api/account");
+export const getAllAccount = async (isDue = false) => {
+  const jsonData = await fetch(`/api/account?isDue=${isDue}`);
 
   const { data } = await jsonData.json();
 
@@ -24,18 +24,22 @@ export const getAccountById = async (id: string) => {
   return data;
 };
 
-export const createAccount = async (name: string, amount: number) => {
+export const createAccount = async (
+  name: string,
+  amount: number,
+  isDue = false
+) => {
   const jsonData = await fetch("/api/account", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ name, amount, isExpense: false }),
+    body: JSON.stringify({ name, amount, isExpense: false, isDue }),
   });
 
   const { data } = await jsonData.json();
 
-  await createAccountHistory(0, amount, true, data._id);
+  await createAccountHistory(0, amount, isDue ? false : true, data._id);
 
   return data;
 };
