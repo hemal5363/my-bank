@@ -47,12 +47,10 @@ export const GET = async (
     });
     const account = await Account.findById(id);
 
-    let total = 0;
-    accountHistory
+    const total = accountHistory
       .filter((account: any) => !account.isCredited)
-      .forEach((account: any) => {
-        total = total + account.amount;
-      });
+      .reduce((totalSum, account) => totalSum + account.amount, 0);
+
     return NextResponse.json(
       { data: accountHistory, account, totalAmount: total },
       { status: 200 }

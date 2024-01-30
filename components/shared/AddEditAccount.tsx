@@ -30,6 +30,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { IAccount } from "@/types";
+import { ACCOUNT_TYPES } from "@/constants";
 
 interface IAddEditAccount {
   buttonName: string;
@@ -78,7 +79,11 @@ const AddEditAccount = ({
     } else if (isAddAmount) {
       await updateAccount(openId, amount, isCredited);
     } else {
-      await createAccount(name, isDue ? -amount : amount, isDue);
+      await createAccount(
+        name,
+        isDue ? -amount : amount,
+        isDue ? ACCOUNT_TYPES.Due : ACCOUNT_TYPES.Account
+      );
     }
     hideLoader();
     doReload();

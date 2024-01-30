@@ -1,5 +1,5 @@
-export const getAllAccount = async (isDue = false) => {
-  const jsonData = await fetch(`/api/account?isDue=${isDue}`);
+export const getAllAccount = async (type: number) => {
+  const jsonData = await fetch(`/api/account?type=${type}`);
 
   const data = await jsonData.json();
 
@@ -17,14 +17,14 @@ export const getAccountById = async (id: string) => {
 export const createAccount = async (
   name: string,
   amount: number,
-  isDue = false
+  type: number
 ) => {
   const jsonData = await fetch("/api/account", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ name, amount, isExpense: false, isDue }),
+    body: JSON.stringify({ name, amount, type }),
   });
 
   const { data } = await jsonData.json();
@@ -58,14 +58,6 @@ export const deleteAccount = async (id: string) => {
   const { data } = await jsonData.json();
 
   return data;
-};
-
-export const getExpenseAccount = async () => {
-  const jsonData = await fetch("/api/account?isExpense=true");
-
-  const { data } = await jsonData.json();
-
-  return data[0];
 };
 
 export const updateExpenseAccount = async (

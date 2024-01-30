@@ -11,13 +11,9 @@ const Account = new mongoose.Schema({
     required: true,
     trim: true,
   },
-  isExpense: {
-    type: Boolean,
-    default: false,
-  },
-  isDue: {
-    type: Boolean,
-    default: false,
+  type: {
+    type: Number,
+    required: true,
   },
   createdAt: {
     type: Date,

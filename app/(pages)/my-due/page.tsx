@@ -18,6 +18,7 @@ import { hideLoader, showLoader } from "@/utils/helper";
 import { IAccount } from "@/types";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { ACCOUNT_TYPES } from "@/constants";
 
 const page = () => {
   const [allAccounts, setAllAccounts] = useState<IAccount[]>([]);
@@ -30,7 +31,7 @@ const page = () => {
 
   const callGetAPI = async () => {
     showLoader();
-    const { data, totalAmount } = await getAllAccount(true);
+    const { data, totalAmount } = await getAllAccount(ACCOUNT_TYPES.Due);
     setAllAccounts(data);
     setTotal(totalAmount);
     hideLoader();

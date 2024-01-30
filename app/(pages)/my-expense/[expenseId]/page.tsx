@@ -9,6 +9,7 @@ import AccountHistoryTable from "@/components/shared/AccountHistoryTable";
 import { getAllAccountHistoryByAccountId } from "@/services/accountHistoryService";
 import DateRangePicker from "@/components/shared/DateRangePicker";
 import { DateRange } from "react-day-picker";
+import { ACCOUNT_TYPES } from "@/constants";
 
 const page = ({ params }: { params: { expenseId: string } }) => {
   const [allAccounts, setAllAccounts] = useState<IAccount[]>([]);
@@ -42,7 +43,7 @@ const page = ({ params }: { params: { expenseId: string } }) => {
   const getReloadAPICall = async () => {
     showLoader();
     await getAccountHistoryAPICall();
-    const { data: accountData } = await getAllAccount();
+    const { data: accountData } = await getAllAccount(ACCOUNT_TYPES.Account);
     setAllAccounts(accountData);
     hideLoader();
   };

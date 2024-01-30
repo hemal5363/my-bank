@@ -1,4 +1,4 @@
-export const headerLinks = [
+export const HEADER_LINKS = [
   {
     id: "1",
     title: "My Accounts",
@@ -15,3 +15,9 @@ export const headerLinks = [
     href: "/my-due",
   },
 ];
+
+export const ACCOUNT_TYPES = {
+  Account: 1,
+  Expense: 2,
+  Due: 3,
+};

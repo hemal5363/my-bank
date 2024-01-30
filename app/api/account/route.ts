@@ -1,3 +1,4 @@
+import { ACCOUNT_TYPES } from "@/constants";
 import Account from "@/models/Account";
 import AccountHistory from "@/models/AccountHistory";
 import connectDB from "@/utils/db";
@@ -6,21 +7,19 @@ import { NextRequest, NextResponse } from "next/server";
 export const GET = async (req: NextRequest) => {
   await connectDB();
   const url = new URL(req.url);
-  const isExpense = url.searchParams.get("isExpense");
-  const isDue = url.searchParams.get("isDue");
+  const type = url.searchParams.get("type");
 
   try {
     const accounts = await Account.find({
-      isExpense: isExpense === "true",
-      isDue: isDue === "true",
+      type: Number(type),
     }).sort({
       createdAt: -1,
     });
 
-    let total = 0;
-    accounts.forEach((account: any) => {
-      total = total + account.amount;
-    });
+    const total = accounts.reduce(
+      (totalSum, account) => totalSum + account.amount,
+      0
+    );
 
     return NextResponse.json(
       { data: accounts, totalAmount: total },
@@ -40,7 +39,7 @@ export const POST = async (req: NextRequest) => {
     const accountHistory = await AccountHistory.create({
       amount: 0,
       newAmount: data.amount,
-      isCredited: !data.isDue,
+      isCredited: data.type === ACCOUNT_TYPES.Account,
       _account: account._id,
     });
 
