@@ -46,7 +46,8 @@ export const GET = async (req: NextRequest) => {
         year: expense._id.year,
         month: expense._id.month,
         totalAmount: expense.sum_val,
-      }));
+      }))
+      .sort((a, b) => b.month - a.month);
 
     return NextResponse.json(
       {
