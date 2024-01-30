@@ -30,8 +30,6 @@ const page = () => {
   const getData = async () => {
     const dashboardData = await getDashboardData();
 
-    console.log("dashboardData", dashboardData);
-
     setOverAllAccountData([
       {
         name: "Balance",
@@ -42,7 +40,7 @@ const page = () => {
     ]);
 
     setMonthlyExpenseData(
-      dashboardData.totalMonthlyExpenseAmount.map((expense: any) => ({
+      dashboardData.totalMonthlyExpenseAmount?.map((expense: any) => ({
         name: format(new Date(expense.year, expense.month, 0), "MMM yyyy"),
         value: expense.totalAmount,
         color: "#" + Math.floor(Math.random() * 16777215).toString(16),

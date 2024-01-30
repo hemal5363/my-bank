@@ -35,8 +35,8 @@ export const GET = async (req: NextRequest) => {
 
     return NextResponse.json(
       {
-        totalAvailableAmount: totalAvailableAmount[0].sum_val,
-        totalDueAmount: -totalDueAmount[0].sum_val,
+        totalAvailableAmount: totalAvailableAmount[0]?.sum_val,
+        totalDueAmount: -totalDueAmount[0]?.sum_val,
         totalMonthlyExpenseAmount: totalMonthlyExpense
           .filter(
             (expense) =>
