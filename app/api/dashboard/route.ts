@@ -2,6 +2,7 @@ import { ACCOUNT_TYPES } from "@/constants";
 import Account from "@/models/Account";
 import AccountHistory from "@/models/AccountHistory";
 import connectDB from "@/utils/db";
+import { ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest) => {
@@ -25,7 +26,7 @@ export const GET = async (req: NextRequest) => {
           _id: {
             year: { $year: "$createdAt" },
             month: { $month: "$createdAt" },
-            _account: process.env.EXPENSE_ID,
+            accountId: "$_account",
             isCredited: "$isCredited",
           },
           sum_val: { $sum: "$amount" },
@@ -33,21 +34,25 @@ export const GET = async (req: NextRequest) => {
       },
     ]);
 
+    const totalMonthlyExpenseAmount = totalMonthlyExpense
+      .filter((expense) => {
+        return (
+          expense._id.accountId.equals(new ObjectId(process.env.EXPENSE_ID)) &&
+          !expense._id.isCredited &&
+          expense._id.year === Number(process.env.EXPENSE_YEAR)
+        );
+      })
+      .map((expense) => ({
+        year: expense._id.year,
+        month: expense._id.month,
+        totalAmount: expense.sum_val,
+      }));
+
     return NextResponse.json(
       {
         totalAvailableAmount: totalAvailableAmount[0]?.sum_val,
         totalDueAmount: -totalDueAmount[0]?.sum_val,
-        totalMonthlyExpenseAmount: totalMonthlyExpense
-          .filter(
-            (expense) =>
-              !expense._id.isCredited &&
-              expense._id.year === Number(process.env.EXPENSE_YEAR)
-          )
-          .map((expense) => ({
-            year: expense._id.year,
-            month: expense._id.month,
-            totalAmount: expense.sum_val,
-          })),
+        totalMonthlyExpenseAmount,
       },
       { status: 200 }
     );
