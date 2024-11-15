@@ -12,3 +12,8 @@ export interface IAccountHistory {
   _account: string;
   createdAt: Date;
 }
+
+export interface IExpenseType {
+  _id: string;
+  name: string;
+}

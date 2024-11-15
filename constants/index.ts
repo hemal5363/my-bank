@@ -14,6 +14,11 @@ export const HEADER_LINKS = [
     title: "My Due",
     href: "/my-due",
   },
+  {
+    id: "4",
+    title: "Expense Type",
+    href: "/expense-type",
+  },
 ];
 
 export const ACCOUNT_TYPES = {
