@@ -3,13 +3,14 @@
 import AddEditAccount from "@/components/shared/AddEditAccount";
 import { useEffect, useState } from "react";
 import { hideLoader, showLoader } from "@/utils/helper";
-import { IAccount, IAccountHistory } from "@/types";
+import { IAccount, IAccountHistory, IExpenseType } from "@/types";
 import { getAllAccount } from "@/services/accountService";
 import AccountHistoryTable from "@/components/shared/AccountHistoryTable";
 import { getAllAccountHistoryByAccountId } from "@/services/accountHistoryService";
 import DateRangePicker from "@/components/shared/DateRangePicker";
 import { DateRange } from "react-day-picker";
 import { ACCOUNT_TYPES } from "@/constants";
+import { getAllExpenseType } from "@/services/expenseTypeService";
 
 const page = ({ params }: { params: { expenseId: string } }) => {
   const [allAccounts, setAllAccounts] = useState<IAccount[]>([]);
@@ -19,13 +20,18 @@ const page = ({ params }: { params: { expenseId: string } }) => {
   const [expenseData, setExpenseData] = useState<IAccount>();
   const [totalExpense, setTotalExpense] = useState(0);
   const [dateRange, setDate] = useState<DateRange | undefined>();
+  const [allExpenseType, setAllExpenseType] = useState<IExpenseType[]>([]);
 
   useEffect(() => {
     getReloadAPICall();
+    (async () => {
+      const { data: expenseTypeData } = await getAllExpenseType();
+      setAllExpenseType(expenseTypeData);
+    })();
   }, []);
 
   const getAccountHistoryAPICall = async (date?: DateRange | undefined) => {
-    setDate(date)
+    setDate(date);
     const {
       data: accountHistoryData,
       account,
@@ -58,6 +64,7 @@ const page = ({ params }: { params: { expenseId: string } }) => {
           doReload={getReloadAPICall}
           openId={expenseData?._id}
           accountList={allAccounts}
+          allExpenseType={allExpenseType}
         />
       </div>
       <div className="flex sm:flex-row justify-between items-center gap-4">
@@ -69,6 +76,7 @@ const page = ({ params }: { params: { expenseId: string } }) => {
           doReload={getAccountHistoryAPICall}
           openId={expenseData?._id}
           accountList={allAccounts}
+          allExpenseType={allExpenseType}
         />
       </div>
       <div className="my-5 sm:flex grid items-center gap-5">

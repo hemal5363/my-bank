@@ -29,7 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { IAccount } from "@/types";
+import { IAccount, IExpenseType } from "@/types";
 import { ACCOUNT_TYPES } from "@/constants";
 
 interface IAddEditAccount {
@@ -42,6 +42,7 @@ interface IAddEditAccount {
   openId?: string;
   selectedAmount?: number;
   accountList?: IAccount[];
+  allExpenseType: IExpenseType[];
 }
 
 const AddEditAccount = ({
@@ -54,11 +55,13 @@ const AddEditAccount = ({
   openId = "",
   selectedAmount = 0,
   accountList,
+  allExpenseType,
 }: IAddEditAccount) => {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [amount, setAmount] = useState(0);
   const [accountId, setAccountId] = useState("");
+  const [expenseTypeId, setExpenseTypeId] = useState("");
   const [isCredited, setCredited] = useState(false);
 
   const handleOpenChange = (change: any) => {
@@ -69,20 +72,22 @@ const AddEditAccount = ({
       setAmount(0);
     }
     setName("");
+    setExpenseTypeId("");
   };
 
   const handleSaveClick = async () => {
     handleOpenChange(false);
     showLoader();
     if (isExpense) {
-      await updateExpenseAccount(openId, amount, accountId);
+      await updateExpenseAccount(openId, amount, accountId, expenseTypeId);
     } else if (isAddAmount) {
-      await updateAccount(openId, amount, isCredited);
+      await updateAccount(openId, amount, isCredited, expenseTypeId);
     } else {
       await createAccount(
         name,
         isDue ? -amount : amount,
-        isDue ? ACCOUNT_TYPES.Due : ACCOUNT_TYPES.Account
+        isDue ? ACCOUNT_TYPES.Due : ACCOUNT_TYPES.Account,
+        expenseTypeId
       );
     }
     hideLoader();
@@ -170,6 +175,23 @@ const AddEditAccount = ({
               defaultValue={selectedAmount}
             />
           </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="type" className="text-right">
+              Expense Type
+            </Label>
+            <Select onValueChange={(v) => setExpenseTypeId(v)}>
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="Select type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {allExpenseType?.map((list) => (
+                    <SelectItem value={list._id}>{list.name}</SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         <DialogFooter>
           <Button
@@ -178,7 +200,7 @@ const AddEditAccount = ({
             onClick={handleSaveClick}
             disabled={
               (!name && !isAddAmount && !isExpense) ||
-              !amount ||
+              !(amount && expenseTypeId) ||
               (isExpense && !accountId)
             }
           >

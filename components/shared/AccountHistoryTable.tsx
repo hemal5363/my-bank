@@ -22,6 +22,7 @@ const AccountHistoryTable = ({
             Amount
           </TableHead>
           <TableHead className="text-center text-xl">New Amount</TableHead>
+          <TableHead className="text-center text-xl">Expense Type</TableHead>
           <TableHead className="text-center text-xl">Action</TableHead>
           <TableHead className="text-center text-xl rounded-br-3xl rounded-tr-3xl">
             Date & Time
@@ -43,6 +44,9 @@ const AccountHistoryTable = ({
             </TableCell>
             <TableCell className="text-center">
               {accountsHistory.newAmount}
+            </TableCell>
+            <TableCell className="text-center">
+              {accountsHistory._expenseType?.name || "-"}
             </TableCell>
             <TableCell className="text-center">
               {accountsHistory.isCredited ? "Credit" : "Debit"}

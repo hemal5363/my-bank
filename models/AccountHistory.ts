@@ -23,6 +23,10 @@ const AccountHistory = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Account",
   },
+  _expenseType: {
+    type: Schema.Types.ObjectId,
+    ref: "ExpenseType",
+  },
 });
 
 export default mongoose.models.AccountHistory ||

@@ -17,14 +17,15 @@ export const getAccountById = async (id: string) => {
 export const createAccount = async (
   name: string,
   amount: number,
-  type: number
+  type: number,
+  expenseTypeId: string,
 ) => {
   const jsonData = await fetch("/api/account", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ name, amount, type }),
+    body: JSON.stringify({ name, amount, type, expenseTypeId }),
   });
 
   const { data } = await jsonData.json();
@@ -35,14 +36,15 @@ export const createAccount = async (
 export const updateAccount = async (
   id: string,
   amount: number,
-  isCredited: boolean
+  isCredited: boolean,
+  expenseTypeId: string,
 ) => {
   const jsonData = await fetch(`/api/account/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ amount, isCredited }),
+    body: JSON.stringify({ amount, isCredited, expenseTypeId }),
   });
 
   const { data } = await jsonData.json();
@@ -63,8 +65,9 @@ export const deleteAccount = async (id: string) => {
 export const updateExpenseAccount = async (
   id: string,
   amount: number,
-  fromAccountId: string
+  fromAccountId: string, 
+  expenseTypeId: string,
 ) => {
-  await updateAccount(id, amount, true);
-  await updateAccount(fromAccountId, amount, false);
+  await updateAccount(id, amount, true, expenseTypeId);
+  await updateAccount(fromAccountId, amount, false, expenseTypeId);
 };

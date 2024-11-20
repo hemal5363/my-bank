@@ -41,6 +41,7 @@ export const POST = async (req: NextRequest) => {
       newAmount: data.amount,
       isCredited: data.type === ACCOUNT_TYPES.Account,
       _account: account._id,
+      _expenseType: data.expenseTypeId,
     });
 
     return NextResponse.json(

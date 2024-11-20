@@ -42,9 +42,11 @@ export const GET = async (
     };
   }
   try {
-    const accountHistory = await AccountHistory.find(matchCreatedAt).sort({
-      createdAt: -1,
-    });
+    const accountHistory = await AccountHistory.find(matchCreatedAt)
+      .populate("_expenseType")
+      .sort({
+        createdAt: -1,
+      });
     const account = await Account.findById(id);
 
     const total = accountHistory

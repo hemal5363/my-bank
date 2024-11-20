@@ -40,6 +40,7 @@ export const PUT = async (
       newAmount,
       isCredited: data.isCredited,
       _account: id,
+      _expenseType: data.expenseTypeId,
     });
 
     return NextResponse.json(

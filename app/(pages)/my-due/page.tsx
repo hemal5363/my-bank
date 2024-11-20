@@ -15,15 +15,24 @@ import { getAllAccount } from "@/services/accountService";
 import DeleteAccount from "@/components/shared/DeleteAccount";
 import { useEffect, useState } from "react";
 import { hideLoader, showLoader } from "@/utils/helper";
-import { IAccount } from "@/types";
+import { IAccount, IExpenseType } from "@/types";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ACCOUNT_TYPES } from "@/constants";
+import { getAllExpenseType } from "@/services/expenseTypeService";
 
 const page = () => {
   const [allAccounts, setAllAccounts] = useState<IAccount[]>([]);
   const [total, setTotal] = useState(0);
   const [isReload, setReload] = useState(false);
+  const [allExpenseType, setAllExpenseType] = useState<IExpenseType[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const { data: expenseTypeData } = await getAllExpenseType();
+      setAllExpenseType(expenseTypeData);
+    })();
+  }, []);
 
   useEffect(() => {
     callGetAPI();
@@ -45,7 +54,12 @@ const page = () => {
     <div className="md:m-32 sm:m-16 m-8 border-2 rounded-3xl sm:p-12 p-6">
       <div className="flex sm:flex-row justify-between items-center gap-4">
         <h1 className="text-xl font-bold">My Due</h1>
-        <AddEditAccount buttonName="Add" doReload={doReload} isDue />
+        <AddEditAccount
+          buttonName="Add"
+          doReload={doReload}
+          isDue
+          allExpenseType={allExpenseType}
+        />
       </div>
       <Table className="mt-5">
         <TableHeader>
@@ -73,6 +87,7 @@ const page = () => {
                   isDue
                   doReload={doReload}
                   openId={account._id}
+                  allExpenseType={allExpenseType}
                 />
               </TableCell>
               <TableCell className="text-right">
