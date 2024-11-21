@@ -28,6 +28,7 @@ const page = ({ params }: { params: { accountId: string } }) => {
       await getAllAccountHistoryByAccountId(
         params.accountId,
         undefined,
+        undefined,
         undefined
       );
     setAllAccountsHistory(data);
