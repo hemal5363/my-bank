@@ -174,7 +174,7 @@ const AddEditAccount = ({
             </Label>
             <Select onValueChange={(v) => setExpenseTypeId(v)}>
               <SelectTrigger className="col-span-3">
-                <SelectValue placeholder="Select type" />
+                <SelectValue placeholder="Select expense type" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>

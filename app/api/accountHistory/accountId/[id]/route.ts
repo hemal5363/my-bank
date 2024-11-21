@@ -12,6 +12,7 @@ export const GET = async (
   const url = new URL(req.url);
   const fromDate = url.searchParams.get("fromDate");
   const toDate = url.searchParams.get("toDate");
+  const expenseTypeId = url.searchParams.get("expenseTypeId");
 
   let matchCreatedAt = {};
   if (fromDate !== "undefined" && toDate !== "undefined") {
@@ -41,6 +42,10 @@ export const GET = async (
       _account: id,
     };
   }
+  if (expenseTypeId !== "undefined") {
+    matchCreatedAt = { ...matchCreatedAt, _expenseType: expenseTypeId };
+  }
+
   try {
     const accountHistory = await AccountHistory.find(matchCreatedAt)
       .populate("_expenseType")

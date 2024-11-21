@@ -1,10 +1,11 @@
 export const getAllAccountHistoryByAccountId = async (
   accountId: string,
   fromDate: Date | undefined,
-  toDate: Date | undefined
+  toDate: Date | undefined,
+  expenseTypeId: string | undefined
 ) => {
   const jsonData = await fetch(
-    `/api/accountHistory/accountId/${accountId}?fromDate=${fromDate}&toDate=${toDate}`
+    `/api/accountHistory/accountId/${accountId}?fromDate=${fromDate}&toDate=${toDate}&expenseTypeId=${expenseTypeId}`
   );
 
   const data = await jsonData.json();

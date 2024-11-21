@@ -3,11 +3,10 @@ import Account from "@/models/Account";
 import AccountHistory from "@/models/AccountHistory";
 import connectDB from "@/utils/db";
 import { ObjectId } from "mongodb";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export const GET = async (req: NextRequest) => {
+export const GET = async () => {
   await connectDB();
-  const url = new URL(req.url);
 
   try {
     const totalAvailableAmount = await Account.aggregate([

@@ -6,6 +6,14 @@ export const getAllExpenseType = async () => {
   return data;
 };
 
+export const getFilterExpenseType = async (accountId?: string) => {
+  const jsonData = await fetch(`/api/expenseType/${accountId}`);
+
+  const data = await jsonData.json();
+
+  return data;
+};
+
 export const createExpenseType = async (name: string) => {
   const jsonData = await fetch("/api/expenseType", {
     method: "POST",
