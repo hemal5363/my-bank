@@ -40,7 +40,6 @@ interface IAddEditAccount {
   isExpense?: boolean;
   isExpenseDebit?: boolean;
   openId?: string;
-  selectedAmount?: number;
   accountList?: IAccount[];
   allExpenseType: IExpenseType[];
 }
@@ -53,7 +52,6 @@ const AddEditAccount = ({
   isExpense = false,
   isExpenseDebit = false,
   openId = "",
-  selectedAmount = 0,
   accountList,
   allExpenseType,
 }: IAddEditAccount) => {
@@ -66,11 +64,7 @@ const AddEditAccount = ({
 
   const handleOpenChange = (change: any) => {
     setOpen(change);
-    if (change) {
-      setAmount(selectedAmount);
-    } else {
-      setAmount(0);
-    }
+    setAmount(0);
     setName("");
     setExpenseTypeId("");
   };
@@ -151,7 +145,7 @@ const AddEditAccount = ({
                 <SelectContent>
                   <SelectGroup>
                     {accountList?.map((list) => (
-                      <SelectItem value={list._id}>
+                      <SelectItem value={list._id} key={list._id}>
                         {list.name} ({list.amount})
                       </SelectItem>
                     ))}
@@ -172,7 +166,6 @@ const AddEditAccount = ({
               required
               value={amount}
               onChange={(e) => setAmount(Number(e.target.value))}
-              defaultValue={selectedAmount}
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -186,7 +179,9 @@ const AddEditAccount = ({
               <SelectContent>
                 <SelectGroup>
                   {allExpenseType?.map((list) => (
-                    <SelectItem value={list._id}>{list.name}</SelectItem>
+                    <SelectItem value={list._id} key={list._id}>
+                      {list.name}
+                    </SelectItem>
                   ))}
                 </SelectGroup>
               </SelectContent>
