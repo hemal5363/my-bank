@@ -23,6 +23,10 @@ const page = () => {
     []
   );
 
+  const [monthlyExpenseTypeData, setMonthlyExpenseTypeData] = useState<
+    IChartData[]
+  >([]);
+
   useEffect(() => {
     getData();
   }, []);
@@ -46,6 +50,14 @@ const page = () => {
         color: "#" + Math.floor(Math.random() * 16777215).toString(16),
       }))
     );
+
+    setMonthlyExpenseTypeData(
+      dashboardData.totalMonthlyTypeExpenseAmount?.map((typeExpense: any) => ({
+        name: typeExpense.expenseTypeDetails.name,
+        value: typeExpense.totalAmount,
+        color: "#" + Math.floor(Math.random() * 16777215).toString(16),
+      }))
+    );
   };
 
   return (
@@ -56,6 +68,7 @@ const page = () => {
       <div className="overflow-auto flex flex-col sm:flex-row justify-around items-center">
         <DoughnutChart data={overAllAccountData} />
         <DoughnutChart data={monthlyExpenseData} />
+        <DoughnutChart data={monthlyExpenseTypeData} />
       </div>
     </div>
   );

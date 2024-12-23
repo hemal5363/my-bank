@@ -38,7 +38,8 @@ export const GET = async () => {
         return (
           expense._id.accountId.equals(new ObjectId(process.env.EXPENSE_ID)) &&
           !expense._id.isCredited &&
-          expense._id.year === Number(process.env.EXPENSE_YEAR)
+          new Date(expense._id.year, expense._id.month - 1) >=
+            new Date(new Date().getFullYear() - 1, new Date().getMonth() - 1)
         );
       })
       .map((expense) => ({
@@ -48,11 +49,54 @@ export const GET = async () => {
       }))
       .sort((a, b) => b.month - a.month);
 
+    const totalMonthlyTypeExpense = await AccountHistory.aggregate([
+      {
+        $group: {
+          _id: {
+            month: { $month: "$createdAt" },
+            expenseType: "$_expenseType",
+            accountId: "$_account",
+            isCredited: "$isCredited",
+          },
+          sum_val: { $sum: "$amount" },
+        },
+      },
+      {
+        $lookup: {
+          from: "expensetypes",
+          localField: "_id.expenseType",
+          foreignField: "_id",
+          as: "expenseTypeDetails",
+        },
+      },
+      {
+        $unwind: "$expenseTypeDetails",
+      },
+    ]);
+
+    const totalMonthlyTypeExpenseAmount = totalMonthlyTypeExpense
+      .filter((typeExpense) => {
+        return (
+          typeExpense._id.accountId.equals(
+            new ObjectId(process.env.EXPENSE_ID)
+          ) &&
+          !typeExpense._id.isCredited &&
+          typeExpense._id.month === new Date().getMonth() + 1 &&
+          typeExpense.expenseTypeDetails !== null
+        );
+      })
+      .map((typeExpense) => ({
+        expenseTypeDetails: typeExpense.expenseTypeDetails,
+        totalAmount: typeExpense.sum_val,
+      }))
+      .sort((a, b) => b.expenseTypeDetails.createdAt - a.expenseTypeDetails.createdAt);
+
     return NextResponse.json(
       {
         totalAvailableAmount: totalAvailableAmount[0]?.sum_val,
         totalDueAmount: -totalDueAmount[0]?.sum_val,
         totalMonthlyExpenseAmount,
+        totalMonthlyTypeExpenseAmount,
       },
       { status: 200 }
     );
