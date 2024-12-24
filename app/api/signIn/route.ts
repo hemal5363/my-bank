@@ -57,17 +57,3 @@ export const POST = async (req: NextRequest) => {
     return NextResponse.json({ error }, { status: 500 });
   }
 };
-
-export const getTokenData = async (req: NextRequest) => {
-  const token = req.headers.get("Authorization");
-
-  return new Promise((resolve, reject) => {
-    jwt.verify(token, secretKey, (err: { message: any }, decoded: any) => {
-      if (err) {
-        reject(new Error(`Invalid token: ${err.message}`));
-      } else {
-        resolve(decoded);
-      }
-    });
-  });
-};
