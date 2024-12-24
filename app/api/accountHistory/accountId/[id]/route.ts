@@ -9,45 +9,11 @@ export const GET = async (
 ) => {
   await connectDB();
   const id = params.id;
-  const url = new URL(req.url);
-  const fromDate = url.searchParams.get("fromDate");
-  const toDate = url.searchParams.get("toDate");
-  const expenseTypeId = url.searchParams.get("expenseTypeId");
-
-  let matchCreatedAt = {};
-  if (fromDate !== "undefined" && toDate !== "undefined") {
-    matchCreatedAt = {
-      createdAt: {
-        $gte: fromDate,
-        $lte: toDate,
-      },
-      _account: id,
-    };
-  } else if (fromDate !== "undefined") {
-    matchCreatedAt = {
-      createdAt: {
-        $gte: fromDate,
-      },
-      _account: id,
-    };
-  } else if (toDate !== "undefined") {
-    matchCreatedAt = {
-      createdAt: {
-        $lte: toDate,
-      },
-      _account: id,
-    };
-  } else {
-    matchCreatedAt = {
-      _account: id,
-    };
-  }
-  if (expenseTypeId !== "undefined") {
-    matchCreatedAt = { ...matchCreatedAt, _expenseType: expenseTypeId };
-  }
 
   try {
-    const accountHistory = await AccountHistory.find(matchCreatedAt)
+    const accountHistory = await AccountHistory.find({
+      _account: id,
+    })
       .populate("_expenseType")
       .sort({
         createdAt: -1,

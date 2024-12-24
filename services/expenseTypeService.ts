@@ -1,53 +1,39 @@
+import { customFetch } from "@/utils/fetch";
+
 export const getAllExpenseType = async () => {
-  const jsonData = await fetch(`/api/expenseType`);
+  const jsonData = await customFetch(`/api/expenseType`);
 
-  const data = await jsonData.json();
-
-  return data;
+  return jsonData;
 };
 
 export const getFilterExpenseType = async (accountId?: string) => {
-  const jsonData = await fetch(`/api/expenseType/${accountId}`);
+  const jsonData = await customFetch(`/api/expenseType/${accountId}`);
 
-  const data = await jsonData.json();
-
-  return data;
+  return jsonData;
 };
 
 export const createExpenseType = async (name: string) => {
-  const jsonData = await fetch("/api/expenseType", {
+  const { data } = await customFetch("/api/expenseType", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify({ name }),
   });
-
-  const { data } = await jsonData.json();
 
   return data;
 };
 
 export const updateExpenseType = async (id: string, name: string) => {
-  const jsonData = await fetch(`/api/expenseType/${id}`, {
+  const { data } = await customFetch(`/api/expenseType/${id}`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify({ name }),
   });
-
-  const { data } = await jsonData.json();
 
   return data;
 };
 
 export const deleteExpenseType = async (id: string) => {
-  const jsonData = await fetch(`/api/expenseType/${id}`, {
+  const { data } = await customFetch(`/api/expenseType/${id}`, {
     method: "DELETE",
   });
-
-  const { data } = await jsonData.json();
 
   return data;
 };

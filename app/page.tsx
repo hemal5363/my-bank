@@ -14,51 +14,51 @@ const DoughnutChart = dynamic(
   }
 );
 
-const page = () => {
+const Page = () => {
   const [overAllAccountData, setOverAllAccountData] = useState<IChartData[]>(
     []
   );
-
   const [monthlyExpenseData, setMonthlyExpenseData] = useState<IChartData[]>(
     []
   );
-
   const [monthlyExpenseTypeData, setMonthlyExpenseTypeData] = useState<
     IChartData[]
   >([]);
 
   useEffect(() => {
-    getData();
+    const fetchData = async () => {
+      const dashboardData = await getDashboardData();
+
+      setOverAllAccountData([
+        {
+          name: "Balance",
+          value: dashboardData.totalAvailableAmount,
+          color: "#0048ba",
+        },
+        { name: "Due", value: dashboardData.totalDueAmount, color: "#e32636" },
+      ]);
+
+      setMonthlyExpenseData(
+        dashboardData.totalMonthlyExpenseAmount?.map((expense: any) => ({
+          name: format(new Date(expense.year, expense.month, 0), "MMM yyyy"),
+          value: expense.totalAmount,
+          color: "#" + Math.floor(Math.random() * 16777215).toString(16),
+        }))
+      );
+
+      setMonthlyExpenseTypeData(
+        dashboardData.totalMonthlyTypeExpenseAmount?.map(
+          (typeExpense: any) => ({
+            name: typeExpense.expenseTypeDetails.name,
+            value: typeExpense.totalAmount,
+            color: "#" + Math.floor(Math.random() * 16777215).toString(16),
+          })
+        )
+      );
+    };
+
+    fetchData();
   }, []);
-
-  const getData = async () => {
-    const dashboardData = await getDashboardData();
-
-    setOverAllAccountData([
-      {
-        name: "Balance",
-        value: dashboardData.totalAvailableAmount,
-        color: "#0048ba",
-      },
-      { name: "Due", value: dashboardData.totalDueAmount, color: "#e32636" },
-    ]);
-
-    setMonthlyExpenseData(
-      dashboardData.totalMonthlyExpenseAmount?.map((expense: any) => ({
-        name: format(new Date(expense.year, expense.month, 0), "MMM yyyy"),
-        value: expense.totalAmount,
-        color: "#" + Math.floor(Math.random() * 16777215).toString(16),
-      }))
-    );
-
-    setMonthlyExpenseTypeData(
-      dashboardData.totalMonthlyTypeExpenseAmount?.map((typeExpense: any) => ({
-        name: typeExpense.expenseTypeDetails.name,
-        value: typeExpense.totalAmount,
-        color: "#" + Math.floor(Math.random() * 16777215).toString(16),
-      }))
-    );
-  };
 
   return (
     <div className="md:m-32 sm:m-16 m-8 border-2 rounded-3xl sm:p-12 p-6 text-center text-3xl font-extrabold">
@@ -74,4 +74,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

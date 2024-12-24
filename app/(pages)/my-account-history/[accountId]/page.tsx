@@ -19,22 +19,17 @@ const page = ({ params }: { params: { accountId: string } }) => {
   const router = useRouter();
 
   useEffect(() => {
+    const callGetAPI = async () => {
+      showLoader();
+      const { data, account: accountData } =
+        await getAllAccountHistoryByAccountId(params.accountId);
+      setAllAccountsHistory(data);
+      setAccount(accountData);
+      hideLoader();
+    };
+
     callGetAPI();
   }, []);
-
-  const callGetAPI = async () => {
-    showLoader();
-    const { data, account: accountData } =
-      await getAllAccountHistoryByAccountId(
-        params.accountId,
-        undefined,
-        undefined,
-        undefined
-      );
-    setAllAccountsHistory(data);
-    setAccount(accountData);
-    hideLoader();
-  };
 
   return (
     <div className="md:m-32 sm:m-16 m-8 border-2 rounded-3xl sm:p-12 p-6">

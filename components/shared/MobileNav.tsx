@@ -7,9 +7,18 @@ import { Separator } from "../ui/separator";
 import NavItems from "./NavItems";
 import Link from "next/link";
 import { useState } from "react";
+import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
-const MobileNav = ({ expenseId }: { expenseId: string }) => {
+const MobileNav = () => {
   const [isOpen, setOpen] = useState(false);
+
+  const router = useRouter(); // Hook for client-side navigation
+
+  const onLogoutClick = () => {
+    localStorage.removeItem("token");
+    router.push("/login");
+  };
   return (
     <nav className="md:hidden">
       <Sheet open={isOpen} onOpenChange={setOpen}>
@@ -26,7 +35,9 @@ const MobileNav = ({ expenseId }: { expenseId: string }) => {
             My Bank
           </Link>
           <Separator className="border border-gray-50" />
-          <NavItems setOpen={setOpen} expenseId={expenseId} />
+          <NavItems setOpen={setOpen} />
+
+          <Button onClick={onLogoutClick}>Logout</Button>
         </SheetContent>
       </Sheet>
     </nav>

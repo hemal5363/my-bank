@@ -3,9 +3,13 @@ import React from "react";
 import AccountBalanceRoundedIcon from "@mui/icons-material/AccountBalanceRounded";
 import NavItems from "./NavItems";
 import MobileNav from "./MobileNav";
+import { Button } from "../ui/button";
 
-const Header = async () => {
-  const expenseId = (await process.env.EXPENSE_ID) as string;
+interface HeaderProps {
+  onLogoutClick: () => void;
+}
+
+const Header: React.FC<HeaderProps> = async ({ onLogoutClick }) => {
   return (
     <header className="w-full border-b">
       <div className="wrapper flex items-center justify-between">
@@ -15,12 +19,16 @@ const Header = async () => {
         </Link>
 
         <nav className="md:flex-between hidden w-full max-w-xs">
-          <NavItems expenseId={expenseId} />
+          <NavItems />
         </nav>
 
         <div className="flex w-32 justify-end gap-3">
-          <MobileNav expenseId={expenseId} />
+          <MobileNav />
         </div>
+
+        <nav className="md:flex-between hidden">
+          <Button onClick={onLogoutClick}>Logout</Button>
+        </nav>
       </div>
     </header>
   );

@@ -6,7 +6,7 @@ import { hideLoader, showLoader } from "@/utils/helper";
 import { IAccount, IAccountHistory, IExpenseType } from "@/types";
 import { getAllAccount } from "@/services/accountService";
 import AccountHistoryTable from "@/components/shared/AccountHistoryTable";
-import { getAllAccountHistoryByAccountId } from "@/services/accountHistoryService";
+import { getAllAccountHistoryByExpenseAccountId } from "@/services/accountHistoryService";
 import DateRangePicker from "@/components/shared/DateRangePicker";
 import { DateRange } from "react-day-picker";
 import { ACCOUNT_TYPES } from "@/constants";
@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const page = ({ params }: { params: { expenseId: string } }) => {
+const page = () => {
   const [allAccounts, setAllAccounts] = useState<IAccount[]>([]);
   const [allAccountsHistory, setAllAccountsHistory] = useState<
     IAccountHistory[]
@@ -66,8 +66,7 @@ const page = ({ params }: { params: { expenseId: string } }) => {
       data: accountHistoryData,
       account,
       totalAmount,
-    } = await getAllAccountHistoryByAccountId(
-      params.expenseId,
+    } = await getAllAccountHistoryByExpenseAccountId(
       date?.from,
       date?.to,
       eTypeId

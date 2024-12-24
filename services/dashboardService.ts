@@ -1,7 +1,7 @@
+import { customFetch } from "@/utils/fetch";
+
 export const getDashboardData = async () => {
-  const jsonData = await fetch(`/api/dashboard`);
+  const jsonData = await customFetch(`/api/dashboard`);
 
-  const data = await jsonData.json();
-
-  return data;
+  return jsonData;
 };

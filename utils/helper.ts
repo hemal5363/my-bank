@@ -1,5 +1,7 @@
 "use client";
 
+import bcrypt from "bcryptjs";
+
 export const showLoader = (): void => {
   const loaderDiv = document?.getElementById("loaderForAPICall");
   if (loaderDiv) {
@@ -24,4 +26,10 @@ export const hideLoader = (): void => {
     mainDiv.classList.remove("overflow-hidden");
     mainDiv.classList.add("overflow-auto");
   }
+};
+
+export const hashPassword = async (password: string) => {
+  const saltRounds = 10; // Adjust the salt rounds as needed
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+  return hashedPassword;
 };

@@ -4,13 +4,7 @@ import { HEADER_LINKS } from "@/constants";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const NavItems =  ({
-  setOpen,
-  expenseId,
-}: {
-  setOpen?: (open: boolean) => void;
-  expenseId: string;
-}) => {
+const NavItems = ({ setOpen }: { setOpen?: (open: boolean) => void }) => {
   const pathName = usePathname();
   return (
     <ul className="md:flex-between flex w-full flex-col items-start gap-5 md:flex-row">
@@ -24,9 +18,7 @@ const NavItems =  ({
             } flex-center p-medium-16 whitespace-nowrap hover:underline`}
             onClick={() => setOpen?.(false)}
           >
-            <Link href={link.href.replace("[EXPENSE_ID]", expenseId)}>
-              {link.title}
-            </Link>
+            <Link href={link.href}>{link.title}</Link>
           </li>
         );
       })}

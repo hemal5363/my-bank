@@ -35,16 +35,16 @@ const page = () => {
   }, []);
 
   useEffect(() => {
+    const callGetAPI = async () => {
+      showLoader();
+      const { data, totalAmount } = await getAllAccount(ACCOUNT_TYPES.Due);
+      setAllAccounts(data);
+      setTotal(totalAmount);
+      hideLoader();
+    };
+
     callGetAPI();
   }, [isReload]);
-
-  const callGetAPI = async () => {
-    showLoader();
-    const { data, totalAmount } = await getAllAccount(ACCOUNT_TYPES.Due);
-    setAllAccounts(data);
-    setTotal(totalAmount);
-    hideLoader();
-  };
 
   const doReload = () => {
     setReload(!isReload);

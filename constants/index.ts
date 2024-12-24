@@ -7,7 +7,7 @@ export const HEADER_LINKS = [
   {
     id: "2",
     title: "My Expense",
-    href: "/my-expense/[EXPENSE_ID]",
+    href: "/my-expense",
   },
   {
     id: "3",

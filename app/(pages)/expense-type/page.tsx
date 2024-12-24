@@ -20,15 +20,15 @@ const page = () => {
   const [isReload, setReload] = useState(false);
 
   useEffect(() => {
+    const callGetAPI = async () => {
+      showLoader();
+      const { data } = await getAllExpenseType();
+      setAllExpenseTypes(data);
+      hideLoader();
+    };
+
     callGetAPI();
   }, [isReload]);
-
-  const callGetAPI = async () => {
-    showLoader();
-    const { data } = await getAllExpenseType();
-    setAllExpenseTypes(data);
-    hideLoader();
-  };
 
   const doReload = () => {
     setReload(!isReload);

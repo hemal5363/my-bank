@@ -4,10 +4,23 @@ import AccountHistory from "@/models/AccountHistory";
 import connectDB from "@/utils/db";
 import { ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
+const jwt = require("jsonwebtoken");
+
+const secretKey = process.env.AUTH_SECRET;
 
 export const GET = async (req: NextRequest) => {
   await connectDB();
   const url = new URL(req.url);
+
+  const token = req.headers.get("Authorization");
+
+  let tokenData = {
+    expenseAccountId: "",
+  };
+
+  jwt.verify(token, secretKey, (err: any, decoded: any) => {
+    tokenData = decoded;
+  });
 
   try {
     const totalAvailableAmount = await Account.aggregate([
@@ -37,7 +50,7 @@ export const GET = async (req: NextRequest) => {
     const totalMonthlyExpenseAmount = totalMonthlyExpense
       .filter((expense) => {
         return (
-          expense._id.accountId.equals(new ObjectId(process.env.EXPENSE_ID)) &&
+          expense._id.accountId.equals(tokenData.expenseAccountId) &&
           !expense._id.isCredited &&
           new Date(expense._id.year, expense._id.month - 1) >=
             new Date(new Date().getFullYear() - 1, new Date().getMonth() - 1)
@@ -79,7 +92,7 @@ export const GET = async (req: NextRequest) => {
       .filter((typeExpense) => {
         return (
           typeExpense._id.accountId.equals(
-            new ObjectId(process.env.EXPENSE_ID)
+            new ObjectId(tokenData.expenseAccountId)
           ) &&
           !typeExpense._id.isCredited &&
           typeExpense._id.month === new Date().getMonth() + 1 &&
@@ -90,7 +103,10 @@ export const GET = async (req: NextRequest) => {
         expenseTypeDetails: typeExpense.expenseTypeDetails,
         totalAmount: typeExpense.sum_val,
       }))
-      .sort((a, b) => b.expenseTypeDetails.createdAt - a.expenseTypeDetails.createdAt);
+      .sort(
+        (a, b) =>
+          b.expenseTypeDetails.createdAt - a.expenseTypeDetails.createdAt
+      );
 
     return NextResponse.json(
       {
