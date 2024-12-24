@@ -2,6 +2,9 @@ import Account from "@/models/Account";
 import AccountHistory from "@/models/AccountHistory";
 import connectDB from "@/utils/db";
 import { NextRequest, NextResponse } from "next/server";
+const jwt = require("jsonwebtoken");
+
+const secretKey = process.env.AUTH_SECRET;
 
 export const GET = async (
   req: NextRequest,
@@ -9,8 +12,21 @@ export const GET = async (
 ) => {
   await connectDB();
   const id = params.id;
+  const token = req.headers.get("Authorization");
+
+  let tokenData = {
+    _id: "",
+  };
+
+  jwt.verify(token, secretKey, (err: any, decoded: any) => {
+    tokenData = decoded;
+  });
+
   try {
-    const account = await Account.findById(id);
+    const account = await Account.findOne({
+      _id: id,
+      _userAccount: tokenData._id,
+    });
     return NextResponse.json({ data: account }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });

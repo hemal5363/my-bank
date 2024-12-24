@@ -3,15 +3,29 @@ import Account from "@/models/Account";
 import AccountHistory from "@/models/AccountHistory";
 import connectDB from "@/utils/db";
 import { NextRequest, NextResponse } from "next/server";
+const jwt = require("jsonwebtoken");
+
+const secretKey = process.env.AUTH_SECRET;
 
 export const GET = async (req: NextRequest) => {
   await connectDB();
   const url = new URL(req.url);
   const type = url.searchParams.get("type");
 
+  const token = req.headers.get("Authorization");
+
+  let tokenData = {
+    _id: "",
+  };
+
+  jwt.verify(token, secretKey, (err: any, decoded: any) => {
+    tokenData = decoded;
+  });
+
   try {
     const accounts = await Account.find({
       type: Number(type),
+      _userAccount: tokenData._id,
     }).sort({
       createdAt: -1,
     });
@@ -33,8 +47,22 @@ export const GET = async (req: NextRequest) => {
 export const POST = async (req: NextRequest) => {
   await connectDB();
   const data = await req.json();
+
+  const token = req.headers.get("Authorization");
+
+  let tokenData = {
+    _id: "",
+  };
+
+  jwt.verify(token, secretKey, (err: any, decoded: any) => {
+    tokenData = decoded;
+  });
+
   try {
-    const account = await Account.create(data);
+    const account = await Account.create({
+      ...data,
+      _userAccount: tokenData._id,
+    });
 
     const accountHistory = await AccountHistory.create({
       amount: 0,

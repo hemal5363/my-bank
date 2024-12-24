@@ -16,6 +16,7 @@ export const GET = async (req: NextRequest) => {
 
   let tokenData = {
     expenseAccountId: "",
+    _id: "",
   };
 
   jwt.verify(token, secretKey, (err: any, decoded: any) => {
@@ -24,16 +25,37 @@ export const GET = async (req: NextRequest) => {
 
   try {
     const totalAvailableAmount = await Account.aggregate([
-      { $match: { type: { $lt: ACCOUNT_TYPES.Due } } },
-      { $group: { _id: null, sum_val: { $sum: "$amount" } } },
+      {
+        $match: {
+          _userAccount: new ObjectId(tokenData._id),
+          type: { $lt: ACCOUNT_TYPES.Due },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          sum_val: { $sum: "$amount" },
+        },
+      },
     ]);
 
     const totalDueAmount = await Account.aggregate([
-      { $match: { type: ACCOUNT_TYPES.Due } },
+      {
+        $match: {
+          type: ACCOUNT_TYPES.Due,
+          _userAccount: new ObjectId(tokenData._id),
+        },
+      },
       { $group: { _id: null, sum_val: { $sum: "$amount" } } },
     ]);
 
     const totalMonthlyExpense = await AccountHistory.aggregate([
+      {
+        $match: {
+          _account: new ObjectId(tokenData.expenseAccountId),
+          isCredited: false,
+        },
+      },
       {
         $group: {
           _id: {
@@ -50,10 +72,8 @@ export const GET = async (req: NextRequest) => {
     const totalMonthlyExpenseAmount = totalMonthlyExpense
       .filter((expense) => {
         return (
-          expense._id.accountId.equals(tokenData.expenseAccountId) &&
-          !expense._id.isCredited &&
           new Date(expense._id.year, expense._id.month - 1) >=
-            new Date(new Date().getFullYear() - 1, new Date().getMonth() - 1)
+          new Date(new Date().getFullYear() - 1, new Date().getMonth() - 1)
         );
       })
       .map((expense) => ({
@@ -64,6 +84,13 @@ export const GET = async (req: NextRequest) => {
       .sort((a, b) => b.month - a.month);
 
     const totalMonthlyTypeExpense = await AccountHistory.aggregate([
+      {
+        $match: {
+          _account: new ObjectId(tokenData.expenseAccountId),
+          isCredited: false,
+          _expenseType: { $ne: null },
+        },
+      },
       {
         $group: {
           _id: {
@@ -90,14 +117,7 @@ export const GET = async (req: NextRequest) => {
 
     const totalMonthlyTypeExpenseAmount = totalMonthlyTypeExpense
       .filter((typeExpense) => {
-        return (
-          typeExpense._id.accountId.equals(
-            new ObjectId(tokenData.expenseAccountId)
-          ) &&
-          !typeExpense._id.isCredited &&
-          typeExpense._id.month === new Date().getMonth() + 1 &&
-          typeExpense.expenseTypeDetails !== null
-        );
+        return typeExpense._id.month === new Date().getMonth() + 1;
       })
       .map((typeExpense) => ({
         expenseTypeDetails: typeExpense.expenseTypeDetails,

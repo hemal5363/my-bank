@@ -7,7 +7,6 @@ import { createUserAccount } from "@/services/userAccountService";
 import { hashPassword } from "@/utils/helper";
 import Link from "next/link";
 import { useState } from "react";
-import { toast } from "react-toastify";
 
 const page = () => {
   const [name, setName] = useState<string>("");
@@ -44,16 +43,7 @@ const page = () => {
       return;
     }
 
-    const userAccountData = await createUserAccount(
-      name,
-      email,
-      await hashPassword(password)
-    );
-    if (userAccountData && userAccountData.data) {
-      toast.success(userAccountData.message);
-    } else if (userAccountData && userAccountData.message) {
-      toast.error(userAccountData.message);
-    }
+    await createUserAccount(name, email, await hashPassword(password));
   };
 
   return (

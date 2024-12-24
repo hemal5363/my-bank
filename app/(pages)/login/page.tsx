@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label";
 import { signInUserAccount } from "@/services/userAccountService";
 import Link from "next/link";
 import { useState } from "react";
-import { toast } from "react-toastify";
 import { useRouter } from "next/navigation"; // Make sure to import `useRouter` from `next/navigation`
 
 const Page = () => {
@@ -33,10 +32,7 @@ const Page = () => {
     const userAccountData = await signInUserAccount(email, password);
     if (userAccountData && userAccountData.data) {
       await localStorage.setItem("token", userAccountData.token);
-      toast.success(userAccountData.message);
       router.push("/");
-    } else if (userAccountData && userAccountData.message) {
-      toast.error(userAccountData.message);
     }
   };
 

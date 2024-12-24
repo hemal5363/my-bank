@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const Account = new mongoose.Schema({
   name: {
@@ -18,6 +18,10 @@ const Account = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
+  },
+  _userAccount: {
+    type: Schema.Types.ObjectId,
+    ref: "UserAccount",
   },
 });
 

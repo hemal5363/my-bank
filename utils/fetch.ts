@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+
 interface FetchOptions extends RequestInit {
   body?: any; // Allow any type for the request body
   headers?: Record<string, string>;
@@ -30,14 +32,20 @@ export async function customFetch(url: string, options: FetchOptions = {}) {
       return response;
     });
 
+    let success;
+
     // Check if the response status is in the range 200-299 (success)
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "Something went wrong");
+      toast.error(error.message || "Something went wrong");
+      return;
+    } else if (response.ok) {
+      success = await response.json();
+      toast.success(success.message);
     }
 
     // Parse JSON response if successful
-    return await response.json();
+    return success;
   } catch (error) {
     throw error; // Rethrow the error or handle it as needed
   }
