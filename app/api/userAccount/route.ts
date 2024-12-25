@@ -11,6 +11,33 @@ const jwt = require("jsonwebtoken");
 
 const secretKey = process.env.AUTH_SECRET;
 
+export const GET = async (req: NextRequest) => {
+  await connectDB();
+  const token = req.headers.get("Authorization");
+
+  let tokenData: ITokenData = {
+    _id: "",
+    email: "",
+    expenseAccountId: "",
+  };
+
+  jwt.verify(token, secretKey, (err: null, decoded: ITokenData) => {
+    tokenData = decoded;
+  });
+  try {
+    const existingUser = await UserAccount.findById(tokenData._id);
+
+    return NextResponse.json(
+      {
+        data: existingUser,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json({ error }, { status: 500 });
+  }
+};
+
 export const POST = async (req: NextRequest) => {
   await connectDB();
   const data = await req.json();
@@ -93,6 +120,42 @@ export const PATCH = async (req: NextRequest) => {
       {
         message: "Password Updated Successfully",
         data: userAccount,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json({ error }, { status: 500 });
+  }
+};
+
+export const PUT = async (req: NextRequest) => {
+  await connectDB();
+  const data = await req.json();
+
+  const token = req.headers.get("Authorization");
+
+  let tokenData: ITokenData = {
+    _id: "",
+    email: "",
+    expenseAccountId: "",
+  };
+
+  jwt.verify(token, secretKey, (err: null, decoded: ITokenData) => {
+    tokenData = decoded;
+  });
+  try {
+    const existingUser = await UserAccount.findByIdAndUpdate(
+      tokenData._id,
+      {
+        name: data.name,
+      },
+      { new: true }
+    );
+
+    return NextResponse.json(
+      {
+        message: "User Account Updated Successfully",
+        data: existingUser,
       },
       { status: 200 }
     );

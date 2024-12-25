@@ -1,5 +1,11 @@
 import { customFetch } from "@/utils/fetch";
 
+export const getUserAccount = async () => {
+  const { data } = await customFetch("/api/userAccount");
+
+  return data;
+};
+
 export const createUserAccount = async (
   name: string,
   email: string,
@@ -8,6 +14,15 @@ export const createUserAccount = async (
   const jsonData = await customFetch("/api/userAccount", {
     method: "POST",
     body: JSON.stringify({ name, email, password }),
+  });
+
+  return jsonData;
+};
+
+export const updateUserAccount = async (name: string) => {
+  const jsonData = await customFetch("/api/userAccount", {
+    method: "PUT",
+    body: JSON.stringify({ name }),
   });
 
   return jsonData;

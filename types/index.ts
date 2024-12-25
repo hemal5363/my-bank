@@ -24,3 +24,9 @@ export interface ITokenData {
   _id: string;
   expenseAccountId: string;
 }
+
+export interface IUserAccount {
+  _id: string;
+  name: string;
+  email: string;
+}

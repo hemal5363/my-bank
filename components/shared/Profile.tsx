@@ -7,11 +7,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useUser } from "@/hooks/UserContext";
 import { truncateString } from "@/utils/helper";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import { DropdownMenuGroup } from "@radix-ui/react-dropdown-menu";
-import { useEffect, useState } from "react";
 
 interface ProfileProps {
   onLogoutClick: () => void;
@@ -22,15 +22,7 @@ const Profile: React.FC<ProfileProps> = ({
   onLogoutClick,
   onRedirectionClick,
 }) => {
-  const [userName, setUserName] = useState<string | null>();
-
-  useEffect(() => {
-    const userDataJson = localStorage.getItem("userData");
-    if (userDataJson) {
-      const userData = JSON.parse(userDataJson);
-      setUserName(userData.name);
-    }
-  }, []);
+  const { userData } = useUser();
 
   return (
     <DropdownMenu>
@@ -39,7 +31,7 @@ const Profile: React.FC<ProfileProps> = ({
           variant="outline"
           className="border-0 p-0 gap-1 text-base font-bold text-primary hover:text-primary"
         >
-          Hello, {truncateString(userName)}{" "}
+          Hello, {truncateString(userData.name)}{" "}
           <AccountCircleRoundedIcon color="primary" fontSize="large" />
         </Button>
       </DropdownMenuTrigger>
@@ -47,10 +39,7 @@ const Profile: React.FC<ProfileProps> = ({
         <DropdownMenuLabel>My User Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem
-            onClick={() => onRedirectionClick("/profile")}
-            disabled
-          >
+          <DropdownMenuItem onClick={() => onRedirectionClick("/profile")}>
             <span>Profile Setting</span>
           </DropdownMenuItem>
           <DropdownMenuItem

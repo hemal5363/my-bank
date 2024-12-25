@@ -22,7 +22,7 @@ export const HEADER_LINKS = [
   {
     id: "5",
     title: "Profile Setting",
-    href: "#",
+    href: "/profile",
   },
   {
     id: "6",

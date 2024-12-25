@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // Make sure to import `useRouter` from `next/navigation`
 import { EMAIL_REGEX } from "@/constants";
+import { useUser } from "@/hooks/UserContext";
 
 const Page = () => {
   const [email, setEmail] = useState<string>("");
@@ -15,6 +16,7 @@ const Page = () => {
   const [error, setError] = useState<string>("");
 
   const router = useRouter(); // Hook for client-side navigation
+  const { setUserData } = useUser();
 
   const validateEmail = (email: string) => {
     return EMAIL_REGEX.test(email);
@@ -32,7 +34,7 @@ const Page = () => {
     const userAccountData = await signInUserAccount(email, password);
     if (userAccountData && userAccountData.data) {
       localStorage.setItem("token", userAccountData.token);
-      localStorage.setItem("userData", JSON.stringify(userAccountData.data));
+      setUserData(userAccountData.data);
       router.push("/");
     }
   };

@@ -6,27 +6,20 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { Separator } from "../ui/separator";
 import NavItems from "./NavItems";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { truncateString } from "@/utils/helper";
+import { useUser } from "@/hooks/UserContext";
 
 const MobileNav = () => {
   const [isOpen, setOpen] = useState(false);
-  const [userName, setUserName] = useState<string | null>();
 
   const router = useRouter(); // Hook for client-side navigation
-
-  useEffect(() => {
-    const userDataJson = localStorage.getItem("userData");
-    if (userDataJson) {
-      const userData = JSON.parse(userDataJson);
-      setUserName(userData.name);
-    }
-  }, []);
+  const { userData } = useUser();
 
   const onLogoutClick = () => {
-    localStorage.removeItem("token");
+    localStorage.clear();
     router.push("/login");
   };
   return (
@@ -41,7 +34,7 @@ const MobileNav = () => {
             className="w-44 text-base font-bold text-primary gap-5 flex-center"
             onClick={() => setOpen(false)}
           >
-            Hello, {truncateString(userName)}
+            Hello, {truncateString(userData.name)}
             <AccountCircleRoundedIcon fontSize="large" />
           </Link>
           <Separator className="border border-gray-50" />

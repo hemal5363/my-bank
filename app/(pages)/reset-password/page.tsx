@@ -47,64 +47,78 @@ const Page = () => {
   };
 
   return (
-    <form
-      className="grid place-content-center m-auto h-screen gap-8 max-w-96"
-      onSubmit={handleSubmit}
-    >
-      <div className="grid grid-cols-10 items-center gap-8">
-        <Label htmlFor="oldPassword" className="text-right col-span-4">
-          Old Password
-        </Label>
-        <Input
-          id="oldPassword"
-          placeholder="Enter old password"
-          className="col-span-6"
-          required
-          type="password"
-          value={oldPassword}
-          onChange={(e) => setOldPassword(e.target.value)}
-        />
+    <div className="md:m-32 sm:m-16 m-8 border-2 rounded-3xl sm:p-12 p-6 text-center text-3xl font-extrabold">
+      <div className="flex sm:flex-row items-center gap-4 justify-center mb-8">
+        <h1 className="text-xl font-bold">Reset Password</h1>
       </div>
-      <div className="grid grid-cols-10 items-center gap-8">
-        <Label htmlFor="password" className="text-right col-span-4">
-          Password
-        </Label>
-        <Input
-          id="password"
-          placeholder="Enter password"
-          className="col-span-6"
-          required
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+      <div className="overflow-auto flex flex-col sm:flex-row justify-around items-center">
+        <form className="grid gap-8 w-3/4" onSubmit={handleSubmit}>
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-4 sm:gap-8">
+            <Label
+              htmlFor="oldPassword"
+              className="text-left sm:text-right whitespace-nowrap max-w-32 w-full"
+            >
+              Old Password
+            </Label>
+            <Input
+              id="oldPassword"
+              placeholder="Enter old password"
+              required
+              type="password"
+              value={oldPassword}
+              onChange={(e) => setOldPassword(e.target.value)}
+            />
+          </div>
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-4 sm:gap-8">
+            <Label
+              htmlFor="password"
+              className="text-left sm:text-right whitespace-nowrap max-w-32 w-full"
+            >
+              Password
+            </Label>
+            <Input
+              id="password"
+              placeholder="Enter password"
+              required
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-4 sm:gap-8">
+            <Label
+              htmlFor="confirmPassword"
+              className="text-left sm:text-right whitespace-nowrap max-w-32 w-full"
+            >
+              Confirm Password
+            </Label>
+            <Input
+              id="confirmPassword"
+              placeholder="Enter confirm password"
+              required
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </div>
+          {error && (
+            <div className="text-red-500 text-left text-sm text-w font-normal">
+              {error}
+            </div>
+          )}
+          <div className="flex items-center gap-8 justify-center">
+            <Button
+              type="submit"
+              size="lg"
+              className="col-span-10"
+              disabled={!oldPassword || !password || !confirmPassword}
+            >
+              Reset Password
+            </Button>
+          </div>
+        </form>
       </div>
-      <div className="grid grid-cols-10 items-center gap-8">
-        <Label htmlFor="confirmPassword" className="text-right col-span-4">
-          Confirm Password
-        </Label>
-        <Input
-          id="confirmPassword"
-          placeholder="Enter confirm password"
-          className="col-span-6"
-          required
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
-      </div>
-      {error && <div className="text-red-500 text-center">{error}</div>}
-      <div className="grid grid-cols-10 items-center gap-8">
-        <Button
-          type="submit"
-          size="lg"
-          className="col-span-10"
-          disabled={!oldPassword || !password || !confirmPassword}
-        >
-          Reset Password
-        </Button>
-      </div>
-    </form>
+    </div>
   );
 };
 
