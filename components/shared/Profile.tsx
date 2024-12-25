@@ -12,17 +12,21 @@ import { truncateString } from "@/utils/helper";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import { DropdownMenuGroup } from "@radix-ui/react-dropdown-menu";
+import { useRouter } from "next/navigation";
 
-interface ProfileProps {
-  onLogoutClick: () => void;
-  onRedirectionClick: (location: string) => void;
-}
-
-const Profile: React.FC<ProfileProps> = ({
-  onLogoutClick,
-  onRedirectionClick,
-}) => {
+const Profile = ({}) => {
   const { userData } = useUser();
+
+  const router = useRouter(); // Hook for client-side navigation
+
+  const onLogoutClick = () => {
+    localStorage.clear();
+    router.push("/login");
+  };
+
+  const onRedirectionClick = (location: string) => {
+    router.push(location);
+  };
 
   return (
     <DropdownMenu>

@@ -1,3 +1,5 @@
+"use client";
+
 import { IUserAccount } from "@/types";
 import {
   createContext,

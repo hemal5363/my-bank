@@ -1,5 +1,3 @@
-"use client";
-
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import MenuIcon from "@mui/icons-material/Menu";
