@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -10,7 +11,6 @@ import {
 } from "@/components/ui/table";
 import AddEditExpenseType from "@/components/shared/AddEditExpenseType";
 import DeleteExpenseType from "@/components/shared/DeleteExpenseType";
-import { useEffect, useState } from "react";
 import { hideLoader, showLoader } from "@/utils/helper";
 import { IExpenseType } from "@/types";
 import { getAllExpenseType } from "@/services/expenseTypeService";

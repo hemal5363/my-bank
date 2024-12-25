@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { EMAIL_REGEX, PASSWORD_REGEX } from "@/constants";
 import { createUserAccount } from "@/services/userAccountService";
 import { hashPassword } from "@/utils/helper";
 import Link from "next/link";
@@ -15,16 +16,11 @@ const page = () => {
   const [error, setError] = useState<string>("");
 
   const validateEmail = (email: string) => {
-    // Regex to validate basic email format
-    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return regex.test(email);
+    return EMAIL_REGEX.test(email);
   };
 
   const validatePassword = (password: string) => {
-    // Password strength: at least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character
-    const regex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return regex.test(password);
+    return PASSWORD_REGEX.test(password);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,7 +34,7 @@ const page = () => {
 
     if (!validatePassword(password)) {
       setError(
-        "Password must be at least 8 characters long, with at least one uppercase letter, one lowercase letter, and one number."
+        "Password must be at least 8 characters long, with at least one uppercase letter, one lowercase letter, one special letter and one number."
       );
       return;
     }

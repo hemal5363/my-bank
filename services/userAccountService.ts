@@ -21,3 +21,12 @@ export const signInUserAccount = async (email: string, password: string) => {
 
   return jsonData;
 };
+
+export const forgotPassword = async (email: string) => {
+  const jsonData = await customFetch("/api/send", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+
+  return jsonData;
+};

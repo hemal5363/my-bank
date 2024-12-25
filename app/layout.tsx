@@ -18,7 +18,7 @@ export default function RootLayout({
   const router = useRouter(); // Hook for client-side navigation
 
   const pathname = usePathname(); // Get the current path
-  const hideHeaderRoutes = ["/login", "/sign-up"]; // Add all paths where you want to hide the header
+  const hideHeaderRoutes = ["/login", "/sign-up", "/forgot-password"]; // Add all paths where you want to hide the header
 
   const shouldShowHeader = !hideHeaderRoutes.includes(pathname);
 

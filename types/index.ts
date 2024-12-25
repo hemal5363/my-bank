@@ -18,3 +18,9 @@ export interface IExpenseType {
   _id: string;
   name: string;
 }
+
+export interface ITokenData {
+  email: string;
+  _id: string;
+  expenseAccountId: string;
+}

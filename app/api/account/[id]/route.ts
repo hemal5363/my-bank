@@ -1,5 +1,6 @@
 import Account from "@/models/Account";
 import AccountHistory from "@/models/AccountHistory";
+import { ITokenData } from "@/types";
 import connectDB from "@/utils/db";
 import { NextRequest, NextResponse } from "next/server";
 const jwt = require("jsonwebtoken");
@@ -14,11 +15,13 @@ export const GET = async (
   const id = params.id;
   const token = req.headers.get("Authorization");
 
-  let tokenData = {
+  let tokenData: ITokenData = {
     _id: "",
+    email: "",
+    expenseAccountId: "",
   };
 
-  jwt.verify(token, secretKey, (err: any, decoded: any) => {
+  jwt.verify(token, secretKey, (err: null, decoded: ITokenData) => {
     tokenData = decoded;
   });
 
