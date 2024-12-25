@@ -31,7 +31,8 @@ const Page = () => {
 
     const userAccountData = await signInUserAccount(email, password);
     if (userAccountData && userAccountData.data) {
-      await localStorage.setItem("token", userAccountData.token);
+      localStorage.setItem("token", userAccountData.token);
+      localStorage.setItem("userData", JSON.stringify(userAccountData.data));
       router.push("/");
     }
   };

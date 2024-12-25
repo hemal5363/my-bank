@@ -19,6 +19,16 @@ export const HEADER_LINKS = [
     title: "Expense Type",
     href: "/expense-type",
   },
+  {
+    id: "5",
+    title: "Profile Setting",
+    href: "#",
+  },
+  {
+    id: "6",
+    title: "Reset Password",
+    href: "/reset-password",
+  },
 ];
 
 export const ACCOUNT_TYPES = {

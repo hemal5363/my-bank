@@ -27,6 +27,10 @@ export default function RootLayout({
     router.push("/login");
   };
 
+  const onRedirectionClick = (location: string) => {
+    router.push(location);
+  };
+
   return (
     <html lang="en">
       <body className={inter.className}>
@@ -34,7 +38,12 @@ export default function RootLayout({
           id="mainDiv"
           className="h-screen flex flex-col relative overflow-auto"
         >
-          {shouldShowHeader && <Header onLogoutClick={onLogoutClick} />}
+          {shouldShowHeader && (
+            <Header
+              onLogoutClick={onLogoutClick}
+              onRedirectionClick={onRedirectionClick}
+            />
+          )}
           <Loader />
           <main className="flex-1">{children}</main>
           {/* <Footer /> */}

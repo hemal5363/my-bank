@@ -30,3 +30,12 @@ export const forgotPassword = async (email: string) => {
 
   return jsonData;
 };
+
+export const resetPassword = async (oldPassword: string, password: string) => {
+  const jsonData = await customFetch("/api/userAccount", {
+    method: "PATCH",
+    body: JSON.stringify({ oldPassword, password }),
+  });
+
+  return jsonData;
+};

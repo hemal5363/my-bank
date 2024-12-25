@@ -33,3 +33,9 @@ export const hashPassword = async (password: string) => {
   const hashedPassword = await bcrypt.hash(password, saltRounds);
   return hashedPassword;
 };
+
+export const truncateString = (string: string | null | undefined) => {
+  if (!string) return string;
+  if (string.length <= 5) return string;
+  return string.slice(0, 5) + "...";
+};

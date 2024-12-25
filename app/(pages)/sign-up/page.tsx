@@ -34,7 +34,7 @@ const page = () => {
 
     if (!validatePassword(password)) {
       setError(
-        "Password must be at least 8 characters long, with at least one uppercase letter, one lowercase letter, one special letter and one number."
+        "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one special character, and one number."
       );
       return;
     }
