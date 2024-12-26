@@ -54,3 +54,14 @@ export const from = "From";
 export const expenseType = "Expense Type";
 export const myDue = "My Due";
 export const dueName = "Due Name";
+
+// Account History
+export const accountHistoryCreated = "Account history created successfully.";
+export const accountHistoryDeleted = "Account history deleted successfully.";
+export const myAccountHistory = "My Accounts History";
+export const newAmount = "New Amount";
+export const action = "Action";
+export const dateAndTime = "Date & Time";
+export const credit = "Credit";
+export const debit = "Debit";
+export const totalExpense = "Total Expense";

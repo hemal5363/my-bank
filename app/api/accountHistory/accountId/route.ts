@@ -1,29 +1,24 @@
+import { NextRequest, NextResponse } from "next/server";
+import connectDB from "@/utils/db";
 import Account from "@/models/Account";
 import AccountHistory from "@/models/AccountHistory";
-import connectDB from "@/utils/db";
-import { NextRequest, NextResponse } from "next/server";
-const jwt = require("jsonwebtoken");
-
-const secretKey = process.env.AUTH_SECRET;
+import { getTokenData } from "@/utils/helper";
+import { ITokenData } from "@/types";
+import { NEXT_RESPONSE_STATUS } from "@/constants";
 
 export const GET = async (req: NextRequest) => {
   await connectDB();
+
   const url = new URL(req.url);
+
   const fromDate = url.searchParams.get("fromDate");
   const toDate = url.searchParams.get("toDate");
   const expenseTypeId = url.searchParams.get("expenseTypeId");
 
-  const token = req.headers.get("Authorization");
-
-  let tokenData = {
-    expenseAccountId: "",
-  };
-
-  jwt.verify(token, secretKey, (err: any, decoded: any) => {
-    tokenData = decoded;
-  });
+  const tokenData: ITokenData = getTokenData(req);
 
   let matchCreatedAt = {};
+
   if (fromDate !== "undefined" && toDate !== "undefined") {
     matchCreatedAt = {
       createdAt: {
@@ -51,6 +46,7 @@ export const GET = async (req: NextRequest) => {
       _account: tokenData.expenseAccountId,
     };
   }
+
   if (expenseTypeId !== "undefined") {
     matchCreatedAt = { ...matchCreatedAt, _expenseType: expenseTypeId };
   }
@@ -61,17 +57,21 @@ export const GET = async (req: NextRequest) => {
       .sort({
         createdAt: -1,
       });
+
     const account = await Account.findById(tokenData.expenseAccountId);
 
     const total = accountHistory
-      .filter((account: any) => !account.isCredited)
+      .filter((account) => !account.isCredited)
       .reduce((totalSum, account) => totalSum + account.amount, 0);
 
     return NextResponse.json(
       { data: accountHistory, account, totalAmount: total },
-      { status: 200 }
+      { status: NEXT_RESPONSE_STATUS.OK }
     );
   } catch (error) {
-    return NextResponse.json({ error }, { status: 500 });
+    return NextResponse.json(
+      { error },
+      { status: NEXT_RESPONSE_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 };

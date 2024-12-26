@@ -68,3 +68,10 @@ export interface IPutRequestAccount {
   isCredited: boolean;
   expenseTypeId: string;
 }
+
+export interface IPostRequestAccountHistory {
+  amount: number,
+  newAmount: number,
+  isCredited: boolean,
+  _account: string
+}

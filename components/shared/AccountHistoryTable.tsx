@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import {
   Table,
   TableBody,
@@ -6,8 +7,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { format } from "date-fns";
 import { IAccountHistory } from "@/types";
+import { DATE_FORMAT } from "@/constants";
+import * as configJSON from "@/constants/configJson";
 
 const AccountHistoryTable = ({
   allAccountsHistory,
@@ -19,13 +21,19 @@ const AccountHistoryTable = ({
       <TableHeader className="[&_tr]:border-b-0">
         <TableRow className="bg-cyan-100 hover:bg-cyan-300 whitespace-nowrap">
           <TableHead className="text-center text-xl rounded-bl-3xl rounded-tl-3xl">
-            Amount
+            {configJSON.amount}
           </TableHead>
-          <TableHead className="text-center text-xl">New Amount</TableHead>
-          <TableHead className="text-center text-xl">Expense Type</TableHead>
-          <TableHead className="text-center text-xl">Action</TableHead>
+          <TableHead className="text-center text-xl">
+            {configJSON.newAmount}
+          </TableHead>
+          <TableHead className="text-center text-xl">
+            {configJSON.expenseType}
+          </TableHead>
+          <TableHead className="text-center text-xl">
+            {configJSON.action}
+          </TableHead>
           <TableHead className="text-center text-xl rounded-br-3xl rounded-tr-3xl">
-            Date & Time
+            {configJSON.dateAndTime}
           </TableHead>
         </TableRow>
       </TableHeader>
@@ -49,10 +57,12 @@ const AccountHistoryTable = ({
               {accountsHistory._expenseType?.name || "-"}
             </TableCell>
             <TableCell className="text-center">
-              {accountsHistory.isCredited ? "Credit" : "Debit"}
+              {accountsHistory.isCredited
+                ? configJSON.credit
+                : configJSON.debit}
             </TableCell>
             <TableCell className="text-center rounded-br-3xl rounded-tr-3xl">
-              {format(accountsHistory.createdAt, "dd/MM/yyy hh:mm")}
+              {format(accountsHistory.createdAt, DATE_FORMAT)}
             </TableCell>
           </TableRow>
         ))}

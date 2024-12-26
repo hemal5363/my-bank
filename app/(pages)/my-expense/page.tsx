@@ -1,19 +1,7 @@
 "use client";
 
-import AddEditAccount from "@/components/shared/AddEditAccount";
 import { useEffect, useState } from "react";
-import { hideLoader, showLoader } from "@/utils/helper";
-import { IAccount, IAccountHistory, IExpenseType } from "@/types";
-import { getAllAccount } from "@/services/accountService";
-import AccountHistoryTable from "@/components/shared/AccountHistoryTable";
-import { getAllAccountHistoryByExpenseAccountId } from "@/services/accountHistoryService";
-import DateRangePicker from "@/components/shared/DateRangePicker";
 import { DateRange } from "react-day-picker";
-import { ACCOUNT_TYPES } from "@/constants";
-import {
-  getAllExpenseType,
-  getFilterExpenseType,
-} from "@/services/expenseTypeService";
 import {
   Select,
   SelectContent,
@@ -22,6 +10,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import AddEditAccount from "@/components/shared/AddEditAccount";
+import AccountHistoryTable from "@/components/shared/AccountHistoryTable";
+import DateRangePicker from "@/components/shared/DateRangePicker";
+import { getAllAccount } from "@/services/accountService";
+import { getAllAccountHistoryByExpenseAccountId } from "@/services/accountHistoryService";
+import {
+  getAllExpenseType,
+  getFilterExpenseType,
+} from "@/services/expenseTypeService";
+import { hideLoader, showLoader } from "@/utils/helper";
+import { IAccount, IAccountHistory, IExpenseType } from "@/types";
+import { ACCOUNT_TYPES } from "@/constants";
+import * as configJSON from "@/constants/configJson";
 
 const page = () => {
   const [allAccounts, setAllAccounts] = useState<IAccount[]>([]);
@@ -87,9 +88,9 @@ const page = () => {
   return (
     <div className="md:m-32 sm:m-16 m-8 border-2 rounded-3xl sm:p-12 p-6">
       <div className="flex sm:flex-row justify-between items-center gap-4 mb-6">
-        <h1 className="text-xl font-bold">My Expense</h1>
+        <h1 className="text-xl font-bold">{configJSON.myExpense}</h1>
         <AddEditAccount
-          buttonName="Add Amount"
+          buttonName={configJSON.addAmount}
           isExpense
           doReload={getReloadAPICall}
           openId={expenseData?._id}
@@ -100,7 +101,7 @@ const page = () => {
       <div className="flex sm:flex-row justify-between items-center gap-4">
         <h1 className="text-xl font-bold">{expenseData?.amount}</h1>
         <AddEditAccount
-          buttonName="Add Amount"
+          buttonName={configJSON.addAmount}
           isAddAmount
           isExpenseDebit
           doReload={getAccountHistoryAPICall}
@@ -130,7 +131,9 @@ const page = () => {
           </SelectContent>
         </Select>
         {totalExpense ? (
-          <div className="text-destructive">Total Expense : {totalExpense}</div>
+          <div className="text-destructive">
+            {configJSON.totalExpense} : {totalExpense}
+          </div>
         ) : (
           <></>
         )}

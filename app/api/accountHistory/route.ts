@@ -1,6 +1,9 @@
-import AccountHistory from "@/models/AccountHistory";
-import connectDB from "@/utils/db";
 import { NextRequest, NextResponse } from "next/server";
+import connectDB from "@/utils/db";
+import AccountHistory from "@/models/AccountHistory";
+import { IPostRequestAccountHistory } from "@/types";
+import { NEXT_RESPONSE_STATUS } from "@/constants";
+import * as configJSON from "@/constants/configJson";
 
 export const GET = async () => {
   await connectDB();
@@ -9,22 +12,35 @@ export const GET = async () => {
     const AccountHistories = await AccountHistory.find().sort({
       createdAt: -1,
     });
-    return NextResponse.json({ data: AccountHistories }, { status: 200 });
+
+    return NextResponse.json(
+      { data: AccountHistories },
+      { status: NEXT_RESPONSE_STATUS.OK }
+    );
   } catch (error) {
-    return NextResponse.json({ error }, { status: 500 });
+    return NextResponse.json(
+      { error },
+      { status: NEXT_RESPONSE_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 };
 
 export const POST = async (req: NextRequest) => {
   await connectDB();
-  const data = await req.json();
+
+  const data: IPostRequestAccountHistory = await req.json();
+
   try {
     const accountHistory = await AccountHistory.create(data);
+
     return NextResponse.json(
-      { message: "AccountHistory Created Successfully", data: accountHistory },
-      { status: 200 }
+      { message: configJSON.accountHistoryCreated, data: accountHistory },
+      { status: NEXT_RESPONSE_STATUS.CREATED }
     );
   } catch (error) {
-    return NextResponse.json({ error }, { status: 500 });
+    return NextResponse.json(
+      { error },
+      { status: NEXT_RESPONSE_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 };
