@@ -70,8 +70,12 @@ export interface IPutRequestAccount {
 }
 
 export interface IPostRequestAccountHistory {
-  amount: number,
-  newAmount: number,
-  isCredited: boolean,
-  _account: string
+  amount: number;
+  newAmount: number;
+  isCredited: boolean;
+  _account: string;
+}
+
+export interface IPostAndPutRequestExpenseType {
+  name: string;
 }

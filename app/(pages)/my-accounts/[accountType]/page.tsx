@@ -32,7 +32,7 @@ const page = ({ params }: { params: { accountType: string } }) => {
 
   useEffect(() => {
     (async () => {
-      const { data: expenseTypeData } = await getAllExpenseType();
+      const expenseTypeData = await getAllExpenseType();
       setAllExpenseType(expenseTypeData);
     })();
   }, []);

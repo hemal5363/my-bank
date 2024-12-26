@@ -14,11 +14,12 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { hideLoader, showLoader } from "@/utils/helper";
 import {
   createExpenseType,
   updateExpenseType,
 } from "@/services/expenseTypeService";
+import { hideLoader, showLoader } from "@/utils/helper";
+import * as configJSON from "@/constants/configJson";
 
 interface IAddEditExpenseType {
   buttonName: string;
@@ -51,9 +52,9 @@ const AddEditExpenseType = ({
     handleOpenChange(false);
     showLoader();
     if (isEdit) {
-      await updateExpenseType(openId, name);
+      await updateExpenseType(openId, { name });
     } else {
-      await createExpenseType(name);
+      await createExpenseType({ name });
     }
     hideLoader();
     doReload();
@@ -73,7 +74,7 @@ const AddEditExpenseType = ({
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
-              Name
+              {configJSON.name}
             </Label>
             <Input
               id="name"

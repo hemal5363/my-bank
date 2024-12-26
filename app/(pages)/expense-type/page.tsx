@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { hideLoader, showLoader } from "@/utils/helper";
 import {
   Table,
   TableBody,
@@ -11,9 +12,9 @@ import {
 } from "@/components/ui/table";
 import AddEditExpenseType from "@/components/shared/AddEditExpenseType";
 import DeleteExpenseType from "@/components/shared/DeleteExpenseType";
-import { hideLoader, showLoader } from "@/utils/helper";
-import { IExpenseType } from "@/types";
 import { getAllExpenseType } from "@/services/expenseTypeService";
+import { IExpenseType } from "@/types";
+import * as configJSON from "@/constants/configJson";
 
 const page = () => {
   const [allExpenseTypes, setAllExpenseTypes] = useState<IExpenseType[]>([]);
@@ -22,7 +23,7 @@ const page = () => {
   useEffect(() => {
     const callGetAPI = async () => {
       showLoader();
-      const { data } = await getAllExpenseType();
+      const data = await getAllExpenseType();
       setAllExpenseTypes(data);
       hideLoader();
     };
@@ -37,13 +38,13 @@ const page = () => {
   return (
     <div className="md:m-32 sm:m-16 m-8 border-2 rounded-3xl sm:p-12 p-6">
       <div className="flex sm:flex-row justify-between items-center gap-4">
-        <h1 className="text-xl font-bold">Expense Type</h1>
-        <AddEditExpenseType buttonName="Add" doReload={doReload} />
+        <h1 className="text-xl font-bold">{configJSON.expenseType}</h1>
+        <AddEditExpenseType buttonName={configJSON.add} doReload={doReload} />
       </div>
       <Table className="mt-5">
         <TableHeader>
           <TableRow>
-            <TableHead className="text-xl">Expense Name</TableHead>
+            <TableHead className="text-xl">{configJSON.expenseName}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -52,7 +53,7 @@ const page = () => {
               <TableCell className="font-medium">{expenseType.name}</TableCell>
               <TableCell className="text-right">
                 <AddEditExpenseType
-                  buttonName="Edit"
+                  buttonName={configJSON.edit}
                   isEdit
                   doReload={doReload}
                   openId={expenseType._id}

@@ -41,7 +41,7 @@ const page = () => {
   useEffect(() => {
     getReloadAPICall();
     (async () => {
-      const { data: expenseTypeData } = await getAllExpenseType();
+      const expenseTypeData = await getAllExpenseType();
       setAllExpenseType(expenseTypeData);
     })();
   }, []);
@@ -49,9 +49,7 @@ const page = () => {
   useEffect(() => {
     if (expenseData?._id) {
       (async () => {
-        const { data: expenseTypeData } = await getFilterExpenseType(
-          expenseData?._id
-        );
+        const expenseTypeData = await getFilterExpenseType(expenseData?._id);
         setFilterExpenseType(expenseTypeData);
       })();
     }

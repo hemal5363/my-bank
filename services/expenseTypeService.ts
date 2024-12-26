@@ -1,18 +1,23 @@
 import { customFetch } from "@/utils/fetch";
+import { IExpenseType, IPostAndPutRequestExpenseType } from "@/types";
 
-export const getAllExpenseType = async () => {
-  const jsonData = await customFetch(`/api/expenseType`);
+export const getAllExpenseType = async (): Promise<IExpenseType[]> => {
+  const { data } = await customFetch(`/api/expenseType`);
 
-  return jsonData;
+  return data;
 };
 
-export const getFilterExpenseType = async (accountId?: string) => {
-  const jsonData = await customFetch(`/api/expenseType/${accountId}`);
+export const getFilterExpenseType = async (
+  accountId?: string
+): Promise<IExpenseType[]> => {
+  const { data } = await customFetch(`/api/expenseType/${accountId}`);
 
-  return jsonData;
+  return data;
 };
 
-export const createExpenseType = async (name: string) => {
+export const createExpenseType = async ({
+  name,
+}: IPostAndPutRequestExpenseType): Promise<IExpenseType> => {
   const { data } = await customFetch("/api/expenseType", {
     method: "POST",
     body: JSON.stringify({ name }),
@@ -21,7 +26,10 @@ export const createExpenseType = async (name: string) => {
   return data;
 };
 
-export const updateExpenseType = async (id: string, name: string) => {
+export const updateExpenseType = async (
+  id: string,
+  { name }: IPostAndPutRequestExpenseType
+): Promise<IExpenseType> => {
   const { data } = await customFetch(`/api/expenseType/${id}`, {
     method: "PUT",
     body: JSON.stringify({ name }),
@@ -31,9 +39,7 @@ export const updateExpenseType = async (id: string, name: string) => {
 };
 
 export const deleteExpenseType = async (id: string) => {
-  const { data } = await customFetch(`/api/expenseType/${id}`, {
+  await customFetch(`/api/expenseType/${id}`, {
     method: "DELETE",
   });
-
-  return data;
 };

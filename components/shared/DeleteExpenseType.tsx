@@ -1,10 +1,7 @@
-"use client";
-
-import RemoveCircleOutlineRoundedIcon from '@mui/icons-material/RemoveCircleOutlineRounded';
-
+import RemoveCircleOutlineRoundedIcon from "@mui/icons-material/RemoveCircleOutlineRounded";
 import { Button } from "@/components/ui/button";
+import { deleteExpenseType } from "@/services/expenseTypeService";
 import { hideLoader, showLoader } from "@/utils/helper";
-import { deleteExpenseType } from '@/services/expenseTypeService';
 
 const DeleteExpenseType = ({
   expenseTypeId,
@@ -21,7 +18,12 @@ const DeleteExpenseType = ({
   };
 
   return (
-    <Button size="icon" variant="destructive" className="rounded-xl" onClick={() => handleDeleteClick(expenseTypeId)}>
+    <Button
+      size="icon"
+      variant="destructive"
+      className="rounded-xl"
+      onClick={() => handleDeleteClick(expenseTypeId)}
+    >
       <RemoveCircleOutlineRoundedIcon />
     </Button>
   );

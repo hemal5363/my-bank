@@ -65,3 +65,10 @@ export const dateAndTime = "Date & Time";
 export const credit = "Credit";
 export const debit = "Debit";
 export const totalExpense = "Total Expense";
+
+// Expense Type
+export const expenseTypeCreated = "Expense type created successfully.";
+export const expenseTypeUpdated = "Expense type updated successfully.";
+export const expenseTypeDeleted = "Expense type deleted successfully.";
+export const expenseName = "Expense Name";
+export const edit = "Edit";
