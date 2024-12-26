@@ -15,7 +15,7 @@ export const HEADER_LINKS = [
   {
     id: "1",
     title: configJSON.myAccount,
-    href: `${URL_CONSTANTS.ACCOUNT}?isDue=false`,
+    href: `${URL_CONSTANTS.ACCOUNT}/account`,
   },
   {
     id: "2",
@@ -25,7 +25,7 @@ export const HEADER_LINKS = [
   {
     id: "3",
     title: configJSON.myDue,
-    href: `${URL_CONSTANTS.ACCOUNT}?isDue=true`,
+    href: `${URL_CONSTANTS.ACCOUNT}/due`,
   },
   {
     id: "4",
