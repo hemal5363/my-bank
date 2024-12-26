@@ -38,3 +38,19 @@ export const passwordAndConfirmPasswordMatch =
   "The password and confirm password fields must match.";
 export const forgotPassword = "Forgot password";
 export const save = "Save";
+
+// Account
+export const accountCreated = "Account created successfully.";
+export const accountUpdated = "Account updated successfully.";
+export const accountDeleted = "Account deleted successfully.";
+export const myAccount = "My Accounts";
+export const add = "Add";
+export const accountName = "Account Name";
+export const amount = "Amount";
+export const addAmount = "Add Amount";
+export const total = "Total";
+export const isCredited = "Is Credited";
+export const from = "From";
+export const expenseType = "Expense Type";
+export const myDue = "My Due";
+export const dueName = "Due Name";

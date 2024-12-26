@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import PreviewRoundedIcon from "@mui/icons-material/PreviewRounded";
 import {
   Table,
@@ -10,22 +13,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import AddEditAccount from "@/components/shared/AddEditAccount";
-import { getAllAccount } from "@/services/accountService";
 import DeleteAccount from "@/components/shared/DeleteAccount";
-import { useEffect, useState } from "react";
+import { getAllAccount } from "@/services/accountService";
+import { getAllExpenseType } from "@/services/expenseTypeService";
 import { hideLoader, showLoader } from "@/utils/helper";
 import { IAccount, IExpenseType } from "@/types";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { ACCOUNT_TYPES } from "@/constants";
-import { getAllExpenseType } from "@/services/expenseTypeService";
+import { ACCOUNT_TYPES, URL_CONSTANTS } from "@/constants";
+import * as configJSON from "@/constants/configJson";
 
 const page = () => {
   const [allAccounts, setAllAccounts] = useState<IAccount[]>([]);
   const [total, setTotal] = useState(0);
   const [isReload, setReload] = useState(false);
   const [allExpenseType, setAllExpenseType] = useState<IExpenseType[]>([]);
+
+  const searchParams = useSearchParams();
+  const isDue = searchParams.get("isDue") === "true";
 
   useEffect(() => {
     (async () => {
@@ -37,14 +42,16 @@ const page = () => {
   useEffect(() => {
     const callGetAPI = async () => {
       showLoader();
-      const { data, totalAmount } = await getAllAccount(ACCOUNT_TYPES.Account);
+      const { data, totalAmount } = await getAllAccount(
+        isDue ? ACCOUNT_TYPES.Due : ACCOUNT_TYPES.Account
+      );
       setAllAccounts(data);
       setTotal(totalAmount);
       hideLoader();
     };
 
     callGetAPI();
-  }, [isReload]);
+  }, [isReload, isDue]);
 
   const doReload = () => {
     setReload(!isReload);
@@ -53,18 +60,25 @@ const page = () => {
   return (
     <div className="md:m-32 sm:m-16 m-8 border-2 rounded-3xl sm:p-12 p-6">
       <div className="flex sm:flex-row justify-between items-center gap-4">
-        <h1 className="text-xl font-bold">My Accounts</h1>
+        <h1 className="text-xl font-bold">
+          {isDue ? configJSON.myDue : configJSON.myAccount}
+        </h1>
         <AddEditAccount
-          buttonName="Add"
+          buttonName={configJSON.add}
           doReload={doReload}
+          isDue={isDue}
           allExpenseType={allExpenseType}
         />
       </div>
       <Table className="mt-5">
         <TableHeader>
           <TableRow>
-            <TableHead className="text-xl">Account Name</TableHead>
-            <TableHead className="text-right text-xl">Amount</TableHead>
+            <TableHead className="text-xl">
+              {isDue ? configJSON.dueName : configJSON.accountName}
+            </TableHead>
+            <TableHead className="text-right text-xl">
+              {configJSON.amount}
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -74,15 +88,18 @@ const page = () => {
               <TableCell className="text-right">{account.amount}</TableCell>
               <TableCell className="text-right">
                 <Button size="icon" variant="outline" className="rounded-xl">
-                  <Link href={`/my-account-history/${account._id}`}>
+                  <Link
+                    href={`${URL_CONSTANTS.ACCOUNT_HISTORY}/${account._id}`}
+                  >
                     <PreviewRoundedIcon color="primary" />
                   </Link>
                 </Button>
               </TableCell>
               <TableCell className="text-right">
                 <AddEditAccount
-                  buttonName="Add Amount"
+                  buttonName={configJSON.addAmount}
                   isAddAmount
+                  isDue={isDue}
                   doReload={doReload}
                   openId={account._id}
                   allExpenseType={allExpenseType}
@@ -96,7 +113,9 @@ const page = () => {
         </TableBody>
         <TableFooter>
           <TableRow>
-            <TableCell className="text-base font-bold">Total</TableCell>
+            <TableCell className="text-base font-bold">
+              {configJSON.total}
+            </TableCell>
             <TableCell className="text-right font-bold text-base">
               {total}
             </TableCell>

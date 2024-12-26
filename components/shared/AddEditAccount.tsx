@@ -14,13 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { hideLoader, showLoader } from "@/utils/helper";
-import {
-  createAccount,
-  updateAccount,
-  updateExpenseAccount,
-} from "@/services/accountService";
-import { Checkbox } from "../ui/checkbox";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -28,9 +22,16 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from "@/components/ui/select";
+import {
+  createAccount,
+  updateAccount,
+  updateExpenseAccount,
+} from "@/services/accountService";
+import { hideLoader, showLoader } from "@/utils/helper";
 import { IAccount, IExpenseType } from "@/types";
 import { ACCOUNT_TYPES } from "@/constants";
+import * as configJSON from "@/constants/configJson";
 
 interface IAddEditAccount {
   buttonName: string;
@@ -62,7 +63,7 @@ const AddEditAccount = ({
   const [expenseTypeId, setExpenseTypeId] = useState("");
   const [isCredited, setCredited] = useState(false);
 
-  const handleOpenChange = (change: any) => {
+  const handleOpenChange = (change: boolean) => {
     setOpen(change);
     setAmount(0);
     setName("");
@@ -75,14 +76,14 @@ const AddEditAccount = ({
     if (isExpense) {
       await updateExpenseAccount(openId, amount, accountId, expenseTypeId);
     } else if (isAddAmount) {
-      await updateAccount(openId, amount, isCredited, expenseTypeId);
+      await updateAccount(openId, { amount, isCredited, expenseTypeId });
     } else {
-      await createAccount(
+      await createAccount({
         name,
-        isDue ? -amount : amount,
-        isDue ? ACCOUNT_TYPES.Due : ACCOUNT_TYPES.Account,
-        expenseTypeId
-      );
+        amount: isDue ? -amount : amount,
+        type: isDue ? ACCOUNT_TYPES.Due : ACCOUNT_TYPES.Account,
+        expenseTypeId,
+      });
     }
     hideLoader();
     doReload();
@@ -108,7 +109,7 @@ const AddEditAccount = ({
             isAddAmount ? (
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="isCredited" className="text-right">
-                  Is Credited
+                  {configJSON.isCredited}
                 </Label>
                 <Checkbox
                   id="isCredited"
@@ -121,7 +122,7 @@ const AddEditAccount = ({
             ) : (
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="name" className="text-right">
-                  Name
+                  {configJSON.name}
                 </Label>
                 <Input
                   id="name"
@@ -136,7 +137,7 @@ const AddEditAccount = ({
           ) : (
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="from" className="text-right">
-                From
+                {configJSON.from}
               </Label>
               <Select onValueChange={(v) => setAccountId(v)}>
                 <SelectTrigger className="col-span-3">
@@ -156,7 +157,7 @@ const AddEditAccount = ({
           )}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="amount" className="text-right">
-              Amount
+              {configJSON.amount}
             </Label>
             <Input
               id="amount"
@@ -170,7 +171,7 @@ const AddEditAccount = ({
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="type" className="text-right">
-              Expense Type
+              {configJSON.expenseType}
             </Label>
             <Select onValueChange={(v) => setExpenseTypeId(v)}>
               <SelectTrigger className="col-span-3">

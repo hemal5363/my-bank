@@ -1,51 +1,50 @@
 import { customFetch } from "@/utils/fetch";
+import { IAccount, IPostRequestAccount, IPutRequestAccount } from "@/types";
 
-export const getAllAccount = async (type: number) => {
+export const getAllAccount = async (
+  type: number
+): Promise<{ data: IAccount[]; totalAmount: number }> => {
   const jsonData = await customFetch(`/api/account?type=${type}`);
 
   return jsonData;
 };
 
-export const getAccountById = async (id: string) => {
-  const jsonData = await customFetch(`/api/account/${id}`);
+export const getAccountById = async (id: string): Promise<IAccount> => {
+  const { data } = await customFetch(`/api/account/${id}`);
 
-  return jsonData;
+  return data;
 };
 
-export const createAccount = async (
-  name: string,
-  amount: number,
-  type: number,
-  expenseTypeId: string
-) => {
-  const jsonData = await customFetch("/api/account", {
+export const createAccount = async ({
+  name,
+  amount,
+  type,
+  expenseTypeId,
+}: IPostRequestAccount): Promise<IAccount> => {
+  const { data } = await customFetch("/api/account", {
     method: "POST",
     body: JSON.stringify({ name, amount, type, expenseTypeId }),
   });
 
-  return jsonData;
+  return data;
 };
 
 export const updateAccount = async (
   id: string,
-  amount: number,
-  isCredited: boolean,
-  expenseTypeId: string
-) => {
-  const jsonData = await customFetch(`/api/account/${id}`, {
+  { amount, isCredited, expenseTypeId }: IPutRequestAccount
+): Promise<IAccount> => {
+  const { data } = await customFetch(`/api/account/${id}`, {
     method: "PUT",
     body: JSON.stringify({ amount, isCredited, expenseTypeId }),
   });
 
-  return jsonData;
+  return data;
 };
 
 export const deleteAccount = async (id: string) => {
-  const jsonData = await customFetch(`/api/account/${id}`, {
+  await customFetch(`/api/account/${id}`, {
     method: "DELETE",
   });
-
-  return jsonData;
 };
 
 export const updateExpenseAccount = async (
@@ -54,6 +53,10 @@ export const updateExpenseAccount = async (
   fromAccountId: string,
   expenseTypeId: string
 ) => {
-  await updateAccount(id, amount, true, expenseTypeId);
-  await updateAccount(fromAccountId, amount, false, expenseTypeId);
+  await updateAccount(id, { amount, isCredited: true, expenseTypeId });
+  await updateAccount(fromAccountId, {
+    amount,
+    isCredited: false,
+    expenseTypeId,
+  });
 };

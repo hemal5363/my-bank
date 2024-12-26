@@ -1,26 +1,18 @@
-import { ACCOUNT_TYPES } from "@/constants";
+import { NextRequest, NextResponse } from "next/server";
+import connectDB from "@/utils/db";
 import Account from "@/models/Account";
 import AccountHistory from "@/models/AccountHistory";
-import connectDB from "@/utils/db";
-import { NextRequest, NextResponse } from "next/server";
-const jwt = require("jsonwebtoken");
-
-const secretKey = process.env.AUTH_SECRET;
+import { getTokenData } from "@/utils/helper";
+import { IPostRequestAccount, ITokenData } from "@/types";
+import { ACCOUNT_TYPES, NEXT_RESPONSE_STATUS } from "@/constants";
+import * as configJSON from "@/constants/configJson";
 
 export const GET = async (req: NextRequest) => {
   await connectDB();
   const url = new URL(req.url);
   const type = url.searchParams.get("type");
 
-  const token = req.headers.get("Authorization");
-
-  let tokenData = {
-    _id: "",
-  };
-
-  jwt.verify(token, secretKey, (err: any, decoded: any) => {
-    tokenData = decoded;
-  });
+  const tokenData: ITokenData = getTokenData(req);
 
   try {
     const accounts = await Account.find({
@@ -37,26 +29,21 @@ export const GET = async (req: NextRequest) => {
 
     return NextResponse.json(
       { data: accounts, totalAmount: total },
-      { status: 200 }
+      { status: NEXT_RESPONSE_STATUS.OK }
     );
   } catch (error) {
-    return NextResponse.json({ error }, { status: 500 });
+    return NextResponse.json(
+      { error },
+      { status: NEXT_RESPONSE_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 };
 
 export const POST = async (req: NextRequest) => {
   await connectDB();
-  const data = await req.json();
+  const data: IPostRequestAccount = await req.json();
 
-  const token = req.headers.get("Authorization");
-
-  let tokenData = {
-    _id: "",
-  };
-
-  jwt.verify(token, secretKey, (err: any, decoded: any) => {
-    tokenData = decoded;
-  });
+  const tokenData: ITokenData = getTokenData(req);
 
   try {
     const account = await Account.create({
@@ -74,12 +61,15 @@ export const POST = async (req: NextRequest) => {
 
     return NextResponse.json(
       {
-        message: "Account Created Successfully",
+        message: configJSON.accountCreated,
         data: { ...account._doc, history: accountHistory },
       },
-      { status: 200 }
+      { status: NEXT_RESPONSE_STATUS.CREATED }
     );
   } catch (error) {
-    return NextResponse.json({ error }, { status: 500 });
+    return NextResponse.json(
+      { error },
+      { status: NEXT_RESPONSE_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 };

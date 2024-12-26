@@ -7,13 +7,15 @@ export const URL_CONSTANTS = {
   DASHBOARD: "/",
   PROFILE: "/profile",
   RESET_PASSWORD: "/reset-password",
+  ACCOUNT: "/my-accounts",
+  ACCOUNT_HISTORY: "/my-account-history",
 };
 
 export const HEADER_LINKS = [
   {
     id: "1",
-    title: "My Accounts",
-    href: "/my-accounts",
+    title: configJSON.myAccount,
+    href: `${URL_CONSTANTS.ACCOUNT}?isDue=false`,
   },
   {
     id: "2",
@@ -22,8 +24,8 @@ export const HEADER_LINKS = [
   },
   {
     id: "3",
-    title: "My Due",
-    href: "/my-due",
+    title: configJSON.myDue,
+    href: `${URL_CONSTANTS.ACCOUNT}?isDue=true`,
   },
   {
     id: "4",

@@ -2,6 +2,7 @@ export interface IAccount {
   _id: string;
   name: string;
   amount: number;
+  history?: IAccountHistory;
 }
 
 export interface IAccountHistory {
@@ -55,3 +56,15 @@ export interface IPostRequestSend {
   email: string;
 }
 
+export interface IPostRequestAccount {
+  name: string;
+  amount: number;
+  type: number;
+  expenseTypeId: string;
+}
+
+export interface IPutRequestAccount {
+  amount: number;
+  isCredited: boolean;
+  expenseTypeId: string;
+}
