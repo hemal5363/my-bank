@@ -1,29 +1,24 @@
-import { ACCOUNT_TYPES } from "@/constants";
+import { NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
+import connectDB from "@/utils/db";
 import Account from "@/models/Account";
 import AccountHistory from "@/models/AccountHistory";
 import UserAccount from "@/models/UserAccount";
-import { ITokenData } from "@/types";
-import connectDB from "@/utils/db";
-import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-
-const jwt = require("jsonwebtoken");
-
-const secretKey = process.env.AUTH_SECRET;
+import { getTokenData, hashPassword } from "@/utils/helper";
+import {
+  IPatchRequestUserAccount,
+  IPostRequestUserAccount,
+  IPutRequestUserAccount,
+  ITokenData,
+} from "@/types";
+import { ACCOUNT_TYPES, NEXT_RESPONSE_STATUS } from "@/constants";
+import * as configJSON from "@/constants/configJson";
 
 export const GET = async (req: NextRequest) => {
   await connectDB();
-  const token = req.headers.get("Authorization");
 
-  let tokenData: ITokenData = {
-    _id: "",
-    email: "",
-    expenseAccountId: "",
-  };
+  const tokenData: ITokenData = getTokenData(req);
 
-  jwt.verify(token, secretKey, (err: null, decoded: ITokenData) => {
-    tokenData = decoded;
-  });
   try {
     const existingUser = await UserAccount.findById(tokenData._id);
 
@@ -31,32 +26,40 @@ export const GET = async (req: NextRequest) => {
       {
         data: existingUser,
       },
-      { status: 200 }
+      { status: NEXT_RESPONSE_STATUS.OK }
     );
   } catch (error) {
-    return NextResponse.json({ error }, { status: 500 });
+    return NextResponse.json(
+      { error },
+      { status: NEXT_RESPONSE_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 };
 
 export const POST = async (req: NextRequest) => {
   await connectDB();
-  const data = await req.json();
+
+  const data: IPostRequestUserAccount = await req.json();
+
   try {
-    // Check if email already exists
     const existingUser = await UserAccount.findOne({ email: data.email });
 
     if (existingUser) {
       return NextResponse.json(
-        { message: "Email already exists" },
-        { status: 409 } // 409 Conflict
+        { message: configJSON.accountAlreadyExists },
+        { status: NEXT_RESPONSE_STATUS.CONFLICT }
       );
     }
 
-    // Create new user account
-    const userAccount = await UserAccount.create(data);
+    const hashedPassword = await hashPassword(data.password);
+
+    const userAccount = await UserAccount.create({
+      ...data,
+      password: hashedPassword,
+    });
 
     const account = await Account.create({
-      name: "My Expense",
+      name: configJSON.myExpense,
       amount: 0,
       type: ACCOUNT_TYPES.Expense,
       _userAccount: userAccount._id,
@@ -72,30 +75,25 @@ export const POST = async (req: NextRequest) => {
 
     return NextResponse.json(
       {
-        message: "User Account Created Successfully",
+        message: configJSON.userAccountCreated,
         data: userAccount,
       },
-      { status: 200 }
+      { status: NEXT_RESPONSE_STATUS.CREATED }
     );
   } catch (error) {
-    return NextResponse.json({ error }, { status: 500 });
+    return NextResponse.json(
+      { error },
+      { status: NEXT_RESPONSE_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 };
 
 export const PATCH = async (req: NextRequest) => {
   await connectDB();
-  const data = await req.json();
-  const token = req.headers.get("Authorization");
 
-  let tokenData: ITokenData = {
-    _id: "",
-    email: "",
-    expenseAccountId: "",
-  };
+  const data: IPatchRequestUserAccount = await req.json();
 
-  jwt.verify(token, secretKey, (err: null, decoded: ITokenData) => {
-    tokenData = decoded;
-  });
+  const tokenData: ITokenData = getTokenData(req);
 
   try {
     const existingUser = await UserAccount.findById(tokenData._id);
@@ -107,42 +105,39 @@ export const PATCH = async (req: NextRequest) => {
 
     if (!isValidPassword) {
       return NextResponse.json(
-        { message: "The old password is incorrect." },
-        { status: 409 } // 409 Conflict
+        { message: configJSON.currentPasswordIncorrect },
+        { status: NEXT_RESPONSE_STATUS.UNAUTHORIZED }
       );
     }
 
+    const hashedPassword = await hashPassword(data.password);
+
     const userAccount = await UserAccount.findByIdAndUpdate(tokenData._id, {
-      password: data.password,
+      password: hashedPassword,
     });
 
     return NextResponse.json(
       {
-        message: "Password Updated Successfully",
+        message: configJSON.passwordUpdate,
         data: userAccount,
       },
-      { status: 200 }
+      { status: NEXT_RESPONSE_STATUS.ACCEPTED }
     );
   } catch (error) {
-    return NextResponse.json({ error }, { status: 500 });
+    return NextResponse.json(
+      { error },
+      { status: NEXT_RESPONSE_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 };
 
 export const PUT = async (req: NextRequest) => {
   await connectDB();
-  const data = await req.json();
 
-  const token = req.headers.get("Authorization");
+  const data: IPutRequestUserAccount = await req.json();
 
-  let tokenData: ITokenData = {
-    _id: "",
-    email: "",
-    expenseAccountId: "",
-  };
+  const tokenData: ITokenData = getTokenData(req);
 
-  jwt.verify(token, secretKey, (err: null, decoded: ITokenData) => {
-    tokenData = decoded;
-  });
   try {
     const existingUser = await UserAccount.findByIdAndUpdate(
       tokenData._id,
@@ -154,12 +149,15 @@ export const PUT = async (req: NextRequest) => {
 
     return NextResponse.json(
       {
-        message: "User Account Updated Successfully",
+        message: configJSON.userAccountUpdated,
         data: existingUser,
       },
-      { status: 200 }
+      { status: NEXT_RESPONSE_STATUS.ACCEPTED }
     );
   } catch (error) {
-    return NextResponse.json({ error }, { status: 500 });
+    return NextResponse.json(
+      { error },
+      { status: NEXT_RESPONSE_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 };

@@ -1,13 +1,14 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { resetPassword } from "@/services/userAccountService";
-import { useState } from "react";
-import { useRouter } from "next/navigation"; // Make sure to import `useRouter` from `next/navigation`
-import { PASSWORD_REGEX } from "@/constants";
-import { hashPassword } from "@/utils/helper";
+import { hideLoader, showLoader, validatePassword } from "@/utils/helper";
+import { URL_CONSTANTS } from "@/constants";
+import * as configJSON from "@/constants/configJson";
 
 const Page = () => {
   const [oldPassword, setOldPassword] = useState<string>("");
@@ -15,41 +16,39 @@ const Page = () => {
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
 
-  const router = useRouter(); // Hook for client-side navigation
-
-  const validatePassword = (password: string) => {
-    return PASSWORD_REGEX.test(password);
-  };
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     if (!validatePassword(password)) {
-      setError(
-        "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one special character, and one number."
-      );
+      setError(configJSON.passwordValidation);
       return;
     }
 
     if (password !== confirmPassword) {
-      setError("The Password and Confirm Password fields must match.");
+      setError(configJSON.passwordAndConfirmPasswordMatch);
       return;
     }
 
-    const userAccountData = await resetPassword(
+    showLoader();
+
+    const userAccountData = await resetPassword({
       oldPassword,
-      await hashPassword(password)
-    );
-    if (userAccountData && userAccountData.data) {
-      router.push("/login");
+      password,
+    });
+    if (userAccountData) {
+      router.push(URL_CONSTANTS.LOGIN);
     }
+
+    hideLoader();
   };
 
   return (
     <div className="md:m-32 sm:m-16 m-8 border-2 rounded-3xl sm:p-12 p-6 text-center text-3xl font-extrabold">
       <div className="flex sm:flex-row items-center gap-4 justify-center mb-8">
-        <h1 className="text-xl font-bold">Reset Password</h1>
+        <h1 className="text-xl font-bold">{configJSON.resetPassword}</h1>
       </div>
       <div className="overflow-auto flex flex-col sm:flex-row justify-around items-center">
         <form className="grid gap-8 w-3/4" onSubmit={handleSubmit}>
@@ -58,7 +57,7 @@ const Page = () => {
               htmlFor="oldPassword"
               className="text-left sm:text-right whitespace-nowrap max-w-32 w-full"
             >
-              Old Password
+              {configJSON.oldPassword}
             </Label>
             <Input
               id="oldPassword"
@@ -74,7 +73,7 @@ const Page = () => {
               htmlFor="password"
               className="text-left sm:text-right whitespace-nowrap max-w-32 w-full"
             >
-              Password
+              {configJSON.password}
             </Label>
             <Input
               id="password"
@@ -90,7 +89,7 @@ const Page = () => {
               htmlFor="confirmPassword"
               className="text-left sm:text-right whitespace-nowrap max-w-32 w-full"
             >
-              Confirm Password
+              {configJSON.confirmPassword}
             </Label>
             <Input
               id="confirmPassword"
@@ -113,7 +112,7 @@ const Page = () => {
               className="col-span-10"
               disabled={!oldPassword || !password || !confirmPassword}
             >
-              Reset Password
+              {configJSON.resetPassword}
             </Button>
           </div>
         </form>

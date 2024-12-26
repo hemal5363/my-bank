@@ -1,45 +1,52 @@
 "use client";
 
-import Link from "next/link";
 import React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import AccountBalanceRoundedIcon from "@mui/icons-material/AccountBalanceRounded";
+import { URL_CONSTANTS } from "@/constants";
+import * as configJSON from "@/constants/configJson";
 import NavItems from "./NavItems";
 import MobileNav from "./MobileNav";
 import Profile from "./Profile";
-import { usePathname } from "next/navigation";
 
-const Header = async () => {
-  const pathname = usePathname(); // Get the current path
-  const hideHeaderRoutes = ["/login", "/sign-up", "/forgot-password"]; // Add all paths where you want to hide the header
+const Header = () => {
+  const pathname = usePathname();
+
+  const hideHeaderRoutes = [
+    URL_CONSTANTS.LOGIN,
+    URL_CONSTANTS.SIGN_UP,
+    URL_CONSTANTS.FORGOT_PASSWORD,
+  ];
 
   const shouldShowHeader = !hideHeaderRoutes.includes(pathname);
 
+  if (!shouldShowHeader) return null;
+
   return (
-    shouldShowHeader && (
-      <header className="w-full border-b">
-        <div className="wrapper flex items-center justify-between">
-          <Link
-            href="/"
-            className="w-44 h5-bold text-primary gap-5 flex-center"
-          >
-            <AccountBalanceRoundedIcon fontSize="large" />
-            My Bank
-          </Link>
+    <header className="w-full border-b">
+      <div className="wrapper flex items-center justify-between">
+        <Link
+          href={URL_CONSTANTS.DASHBOARD}
+          className="w-44 h5-bold text-primary gap-5 flex-center"
+        >
+          <AccountBalanceRoundedIcon fontSize="large" />
+          {configJSON.myBank}
+        </Link>
 
-          <nav className="md:flex-between hidden w-full max-w-xs">
-            <NavItems />
-          </nav>
+        <nav className="md:flex-between hidden w-full max-w-xs">
+          <NavItems />
+        </nav>
 
-          <div className="flex w-32 justify-end gap-3">
-            <MobileNav />
-          </div>
-
-          <nav className="md:flex-between hidden">
-            <Profile />
-          </nav>
+        <div className="flex w-32 justify-end gap-3">
+          <MobileNav />
         </div>
-      </header>
-    )
+
+        <nav className="md:flex-between hidden">
+          <Profile />
+        </nav>
+      </div>
+    </header>
   );
 };
 

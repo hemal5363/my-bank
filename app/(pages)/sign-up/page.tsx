@@ -1,13 +1,19 @@
 "use client";
 
+import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { EMAIL_REGEX, PASSWORD_REGEX } from "@/constants";
 import { createUserAccount } from "@/services/userAccountService";
-import { hashPassword } from "@/utils/helper";
-import Link from "next/link";
-import { useState } from "react";
+import {
+  hideLoader,
+  showLoader,
+  validateEmail,
+  validatePassword,
+} from "@/utils/helper";
+import { URL_CONSTANTS } from "@/constants";
+import * as configJSON from "@/constants/configJson";
 
 const page = () => {
   const [name, setName] = useState<string>("");
@@ -15,31 +21,25 @@ const page = () => {
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
 
-  const validateEmail = (email: string) => {
-    return EMAIL_REGEX.test(email);
-  };
-
-  const validatePassword = (password: string) => {
-    return PASSWORD_REGEX.test(password);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     if (!validateEmail(email)) {
-      setError("Please enter a valid email.");
+      setError(configJSON.validEmailAddress);
       return;
     }
 
     if (!validatePassword(password)) {
-      setError(
-        "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one special character, and one number."
-      );
+      setError(configJSON.passwordValidation);
       return;
     }
 
-    await createUserAccount(name, email, await hashPassword(password));
+    showLoader();
+
+    await createUserAccount({ name, email, password });
+
+    hideLoader();
   };
 
   return (
@@ -49,7 +49,7 @@ const page = () => {
     >
       <div className="grid grid-cols-8 items-center gap-8">
         <Label htmlFor="name" className="text-right col-span-2">
-          Name
+          {configJSON.name}
         </Label>
         <Input
           id="name"
@@ -62,7 +62,7 @@ const page = () => {
       </div>
       <div className="grid grid-cols-8 items-center gap-8">
         <Label htmlFor="email" className="text-right col-span-2">
-          Email
+          {configJSON.email}
         </Label>
         <Input
           id="email"
@@ -75,7 +75,7 @@ const page = () => {
       </div>
       <div className="grid grid-cols-8 items-center gap-8">
         <Label htmlFor="password" className="text-right col-span-2">
-          Password
+          {configJSON.password}
         </Label>
         <Input
           id="password"
@@ -95,13 +95,13 @@ const page = () => {
           className="col-span-8"
           disabled={!name || !email || !password}
         >
-          Sign Up
+          {configJSON.signUp}
         </Button>
       </div>
       <div className="text-center">
-        If you have already account?{" "}
-        <Link href="/login" className="underline">
-          Sign In
+        {configJSON.alreadyAccount}{" "}
+        <Link href={URL_CONSTANTS.LOGIN} className="underline">
+          {configJSON.signIn}
         </Link>
       </div>
     </form>

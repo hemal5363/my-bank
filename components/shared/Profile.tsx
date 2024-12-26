@@ -1,27 +1,29 @@
+import { useRouter } from "next/navigation";
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
+import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
+import { useUser } from "@/hooks/UserContext";
+import { truncateString } from "@/utils/helper";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useUser } from "@/hooks/UserContext";
-import { truncateString } from "@/utils/helper";
-import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
-import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
-import { DropdownMenuGroup } from "@radix-ui/react-dropdown-menu";
-import { useRouter } from "next/navigation";
+import { URL_CONSTANTS } from "@/constants";
+import * as configJSON from "@/constants/configJson";
 
-const Profile = ({}) => {
+const Profile = () => {
   const { userData } = useUser();
 
-  const router = useRouter(); // Hook for client-side navigation
+  const router = useRouter();
 
   const onLogoutClick = () => {
     localStorage.clear();
-    router.push("/login");
+    router.push(URL_CONSTANTS.LOGIN);
   };
 
   const onRedirectionClick = (location: string) => {
@@ -35,75 +37,29 @@ const Profile = ({}) => {
           variant="outline"
           className="border-0 p-0 gap-1 text-base font-bold text-primary hover:text-primary"
         >
-          Hello, {truncateString(userData.name)}{" "}
+          {configJSON.hello}, {truncateString(userData.name)}
           <AccountCircleRoundedIcon color="primary" fontSize="large" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>My User Account</DropdownMenuLabel>
+        <DropdownMenuLabel>{configJSON.myUserAccount}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => onRedirectionClick("/profile")}>
-            <span>Profile Setting</span>
+          <DropdownMenuItem
+            onClick={() => onRedirectionClick(URL_CONSTANTS.PROFILE)}
+          >
+            <span>{configJSON.profileSetting}</span>
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => onRedirectionClick("/reset-password")}
+            onClick={() => onRedirectionClick(URL_CONSTANTS.RESET_PASSWORD)}
           >
-            <span>Reset Password</span>
+            <span>{configJSON.resetPassword}</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
-        {/* <DropdownMenuSeparator /> */}
-        {/* <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <Users />
-            <span>Team</span>
-          </DropdownMenuItem>
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>
-              <UserPlus />
-              <span>Invite users</span>
-            </DropdownMenuSubTrigger>
-            <DropdownMenuPortal>
-              <DropdownMenuSubContent>
-                <DropdownMenuItem>
-                  <Mail />
-                  <span>Email</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <MessageSquare />
-                  <span>Message</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <PlusCircle />
-                  <span>More...</span>
-                </DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuPortal>
-          </DropdownMenuSub>
-          <DropdownMenuItem>
-            <Plus />
-            <span>New Team</span>
-            <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-          </DropdownMenuItem>
-        </DropdownMenuGroup> */}
-        {/* <DropdownMenuSeparator /> */}
-        {/* <DropdownMenuItem>
-          <Github />
-          <span>GitHub</span>
-        </DropdownMenuItem> */}
-        {/* <DropdownMenuItem>
-          <LifeBuoy />
-          <span>Support</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem disabled>
-          <Cloud />
-          <span>API</span>
-        </DropdownMenuItem> */}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={onLogoutClick}>
           <LogoutRoundedIcon />
-          <span>Logout</span>
+          <span>{configJSON.logout}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

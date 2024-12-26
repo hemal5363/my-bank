@@ -1,42 +1,48 @@
 "use client";
 
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useUser } from "@/hooks/UserContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signInUserAccount } from "@/services/userAccountService";
-import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/navigation"; // Make sure to import `useRouter` from `next/navigation`
-import { EMAIL_REGEX } from "@/constants";
-import { useUser } from "@/hooks/UserContext";
+import { hideLoader, showLoader, validateEmail } from "@/utils/helper";
+import { LOCAL_STORAGE_CONSTANTS, URL_CONSTANTS } from "@/constants";
+import * as configJSON from "@/constants/configJson";
 
 const Page = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
 
-  const router = useRouter(); // Hook for client-side navigation
-  const { setUserData } = useUser();
+  const router = useRouter();
 
-  const validateEmail = (email: string) => {
-    return EMAIL_REGEX.test(email);
-  };
+  const { setUserData } = useUser();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     if (!validateEmail(email)) {
-      setError("Please enter a valid email.");
+      setError(configJSON.validEmailAddress);
       return;
     }
 
-    const userAccountData = await signInUserAccount(email, password);
+    showLoader();
+
+    const userAccountData = await signInUserAccount({ email, password });
     if (userAccountData && userAccountData.data) {
-      localStorage.setItem("token", userAccountData.token);
+      localStorage.setItem(
+        LOCAL_STORAGE_CONSTANTS.TOKEN,
+        userAccountData.token
+      );
       setUserData(userAccountData.data);
-      router.push("/");
+      router.push(URL_CONSTANTS.DASHBOARD);
     }
+
+    hideLoader();
   };
 
   return (
@@ -46,7 +52,7 @@ const Page = () => {
     >
       <div className="grid grid-cols-8 items-center gap-8">
         <Label htmlFor="email" className="text-right col-span-2">
-          Email
+          {configJSON.email}
         </Label>
         <Input
           id="email"
@@ -59,7 +65,7 @@ const Page = () => {
       </div>
       <div className="grid grid-cols-8 items-center gap-8">
         <Label htmlFor="password" className="text-right col-span-2">
-          Password
+          {configJSON.password}
         </Label>
         <Input
           id="password"
@@ -73,8 +79,8 @@ const Page = () => {
       </div>
       {error && <div className="text-red-500 text-center">{error}</div>}
       <div className="text-right">
-        <Link href="/forgot-password" className="underline">
-          Forgot password?
+        <Link href={URL_CONSTANTS.FORGOT_PASSWORD} className="underline">
+          {configJSON.forgotPassword}?
         </Link>
       </div>
       <div className="grid grid-cols-8 items-center gap-8">
@@ -84,13 +90,13 @@ const Page = () => {
           className="col-span-8"
           disabled={!email || !password}
         >
-          Sign In
+          {configJSON.signIn}
         </Button>
       </div>
       <div className="text-center">
-        If you don't have an account?{" "}
-        <Link href="/sign-up" className="underline">
-          Sign Up
+        {configJSON.doNotHaveAccount}{" "}
+        <Link href={URL_CONSTANTS.SIGN_UP} className="underline">
+          {configJSON.signUp}
         </Link>
       </div>
     </form>

@@ -1,24 +1,28 @@
-import UserAccount from "@/models/UserAccount";
-import connectDB from "@/utils/db";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import connectDB from "@/utils/db";
+import UserAccount from "@/models/UserAccount";
 import Account from "@/models/Account";
-import { ACCOUNT_TYPES } from "@/constants";
+import { IPostRequestSignIn } from "@/types";
+import { ACCOUNT_TYPES, NEXT_RESPONSE_STATUS } from "@/constants";
+import * as configJSON from "@/constants/configJson";
+
 const jwt = require("jsonwebtoken");
 
 const secretKey = process.env.AUTH_SECRET;
 
 export const POST = async (req: NextRequest) => {
   await connectDB();
-  const data = await req.json();
+
+  const data: IPostRequestSignIn = await req.json();
+
   try {
-    // Check if email already exists
     const existingUser = await UserAccount.findOne({ email: data.email });
 
     if (!existingUser) {
       return NextResponse.json(
-        { message: "Invalid credentials!" },
-        { status: 401 } // 409 Conflict
+        { message: configJSON.invalidEmail },
+        { status: NEXT_RESPONSE_STATUS.NOT_FOUND }
       );
     }
 
@@ -29,8 +33,8 @@ export const POST = async (req: NextRequest) => {
 
     if (!isValidPassword) {
       return NextResponse.json(
-        { message: "Invalid password!" },
-        { status: 401 } // 409 Conflict
+        { message: configJSON.invalidPassword },
+        { status: NEXT_RESPONSE_STATUS.CONFLICT }
       );
     }
 
@@ -51,13 +55,16 @@ export const POST = async (req: NextRequest) => {
 
     return NextResponse.json(
       {
-        message: "User Account Sign In Successfully",
+        message: configJSON.userAccountSignIn,
         data: existingUser,
         token,
       },
-      { status: 200 }
+      { status: NEXT_RESPONSE_STATUS.ACCEPTED }
     );
   } catch (error) {
-    return NextResponse.json({ error }, { status: 500 });
+    return NextResponse.json(
+      { error },
+      { status: NEXT_RESPONSE_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 };

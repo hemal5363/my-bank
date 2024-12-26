@@ -1,25 +1,29 @@
-import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import MenuIcon from "@mui/icons-material/Menu";
-import { Separator } from "../ui/separator";
-import NavItems from "./NavItems";
-import Link from "next/link";
 import { useState } from "react";
-import { Button } from "../ui/button";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { truncateString } from "@/utils/helper";
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
+import MenuIcon from "@mui/icons-material/Menu";
 import { useUser } from "@/hooks/UserContext";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { truncateString } from "@/utils/helper";
+import { URL_CONSTANTS } from "@/constants";
+import * as configJSON from "@/constants/configJson";
+import NavItems from "./NavItems";
 
 const MobileNav = () => {
   const [isOpen, setOpen] = useState(false);
 
-  const router = useRouter(); // Hook for client-side navigation
+  const router = useRouter();
+
   const { userData } = useUser();
 
   const onLogoutClick = () => {
     localStorage.clear();
-    router.push("/login");
+    router.push(URL_CONSTANTS.LOGIN);
   };
+
   return (
     <nav className="md:hidden">
       <Sheet open={isOpen} onOpenChange={setOpen}>
@@ -28,18 +32,18 @@ const MobileNav = () => {
         </SheetTrigger>
         <SheetContent className="flex flex-col gap-6 bg-white md:hidden">
           <Link
-            href="/"
+            href={URL_CONSTANTS.DASHBOARD}
             className="w-44 text-base font-bold text-primary gap-5 flex-center"
             onClick={() => setOpen(false)}
           >
-            Hello, {truncateString(userData.name)}
+            {configJSON.hello}, {truncateString(userData.name)}
             <AccountCircleRoundedIcon fontSize="large" />
           </Link>
           <Separator className="border border-gray-50" />
           <NavItems setOpen={setOpen} isMyUserAccountShow />
           <Separator className="border border-gray-50" />
 
-          <Button onClick={onLogoutClick}>Logout</Button>
+          <Button onClick={onLogoutClick}>{configJSON.logout}</Button>
         </SheetContent>
       </Sheet>
     </nav>

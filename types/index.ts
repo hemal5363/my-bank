@@ -19,14 +19,39 @@ export interface IExpenseType {
   name: string;
 }
 
+export interface IUserAccount {
+  _id: string;
+  name: string;
+  email: string;
+}
+
 export interface ITokenData {
   email: string;
   _id: string;
   expenseAccountId: string;
 }
 
-export interface IUserAccount {
-  _id: string;
+export interface IPostRequestUserAccount {
   name: string;
   email: string;
+  password: string;
 }
+
+export interface IPatchRequestUserAccount {
+  oldPassword: string;
+  password: string;
+}
+
+export interface IPutRequestUserAccount {
+  name: string;
+}
+
+export interface IPostRequestSignIn {
+  email: string;
+  password: string;
+}
+
+export interface IPostRequestSend {
+  email: string;
+}
+

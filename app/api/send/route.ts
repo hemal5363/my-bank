@@ -1,12 +1,16 @@
-import UserAccount from "@/models/UserAccount";
-import connectDB from "@/utils/db";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import connectDB from "@/utils/db";
+import UserAccount from "@/models/UserAccount";
 import transporter from "@/utils/sendMail";
+import { IPostRequestSend } from "@/types";
+import { NEXT_RESPONSE_STATUS } from "@/constants";
+import * as configJSON from "@/constants/configJson";
 
 export const POST = async (req: NextRequest) => {
   await connectDB();
-  const requestData = await req.json();
+
+  const requestData: IPostRequestSend = await req.json();
 
   try {
     const existingUser = await UserAccount.findOne({
@@ -15,8 +19,8 @@ export const POST = async (req: NextRequest) => {
 
     if (!existingUser) {
       return NextResponse.json(
-        { message: "Invalid email account!" },
-        { status: 401 } // 409 Conflict
+        { message: configJSON.invalidEmail },
+        { status: NEXT_RESPONSE_STATUS.NOT_FOUND }
       );
     }
 
@@ -61,12 +65,15 @@ export const POST = async (req: NextRequest) => {
 
     return Response.json(
       {
-        message: "Email Send Successfully",
+        message: configJSON.emailSend,
         info,
       },
-      { status: 200 }
+      { status: NEXT_RESPONSE_STATUS.OK }
     );
   } catch (error) {
-    return Response.json({ error }, { status: 500 });
+    return Response.json(
+      { error },
+      { status: NEXT_RESPONSE_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 };

@@ -1,5 +1,6 @@
 "use client";
 
+import { LOCAL_STORAGE_CONSTANTS } from "@/constants";
 import { IUserAccount } from "@/types";
 import {
   createContext,
@@ -23,7 +24,7 @@ interface UserProviderProps {
 const defaultUserData: IUserAccount = {
   _id: "",
   name: "",
-  email: "", // Initialize other properties here
+  email: "",
 };
 
 export const UserProvider = ({ children }: UserProviderProps) => {
@@ -31,7 +32,9 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   useEffect(() => {
     const storedUserData =
-      typeof window !== "undefined" ? localStorage.getItem("userData") : null;
+      typeof window !== "undefined"
+        ? localStorage.getItem(LOCAL_STORAGE_CONSTANTS.USER_DATA)
+        : null;
 
     const initialUserData: IUserAccount = storedUserData
       ? JSON.parse(storedUserData)
@@ -42,7 +45,10 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   const updateUserData = (newUserData: IUserAccount) => {
     setUserDataState(newUserData);
-    localStorage.setItem("userData", JSON.stringify(newUserData)); // Store the updated user data in localStorage
+    localStorage.setItem(
+      LOCAL_STORAGE_CONSTANTS.USER_DATA,
+      JSON.stringify(newUserData)
+    );
   };
 
   return (
@@ -52,10 +58,4 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   );
 };
 
-export const useUser = (): UserContextType => {
-  const context = useContext(UserContext);
-  if (!context) {
-    throw new Error("useUser must be used within a UserProvider");
-  }
-  return context;
-};
+export const useUser = () => useContext(UserContext);

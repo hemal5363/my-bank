@@ -1,31 +1,33 @@
 "use client";
 
+import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { forgotPassword } from "@/services/userAccountService";
-import Link from "next/link";
-import { useState } from "react";
+import { hideLoader, showLoader, validateEmail } from "@/utils/helper";
+import { URL_CONSTANTS } from "@/constants";
+import * as configJSON from "@/constants/configJson";
 
 const Page = () => {
   const [email, setEmail] = useState<string>("");
   const [error, setError] = useState<string>("");
-
-  const validateEmail = (email: string) => {
-    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return regex.test(email);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     if (!validateEmail(email)) {
-      setError("Please enter a valid email.");
+      setError(configJSON.validEmailAddress);
       return;
     }
 
-    await forgotPassword(email);
+    showLoader();
+
+    await forgotPassword({ email });
+
+    hideLoader();
   };
 
   return (
@@ -35,7 +37,7 @@ const Page = () => {
     >
       <div className="grid grid-cols-8 items-center gap-8">
         <Label htmlFor="email" className="text-right col-span-2">
-          Email
+          {configJSON.email}
         </Label>
         <Input
           id="email"
@@ -54,13 +56,13 @@ const Page = () => {
           className="col-span-8"
           disabled={!email}
         >
-          Send Email
+          {configJSON.sendEmail}
         </Button>
       </div>
       <div className="text-center">
-        If you don't have an account?{" "}
-        <Link href="/sign-up" className="underline">
-          Sign Up
+        {configJSON.goBackToSignIn}{" "}
+        <Link href={URL_CONSTANTS.LOGIN} className="underline">
+          {configJSON.signIn}
         </Link>
       </div>
     </form>
