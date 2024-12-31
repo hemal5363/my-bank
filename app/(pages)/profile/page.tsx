@@ -1,22 +1,26 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/UserContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  deleteUserAccount,
   getUserAccount,
   updateUserAccount,
 } from "@/services/userAccountService";
 import { hideLoader, showLoader } from "@/utils/helper";
 import { IUserAccount } from "@/types";
+import { URL_CONSTANTS } from "@/constants";
 import * as configJSON from "@/constants/configJson";
 
 const Page = () => {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
 
+  const router = useRouter();
   const { setUserData } = useUser();
 
   useEffect(() => {
@@ -44,6 +48,14 @@ const Page = () => {
     }
 
     hideLoader();
+  };
+
+  const handleDeleteClick = async () => {
+    const response = await deleteUserAccount();
+    if (response.message) {
+      router.push(URL_CONSTANTS.LOGIN);
+      localStorage.clear();
+    }
   };
 
   return (
@@ -86,6 +98,14 @@ const Page = () => {
               disabled={!name || !email}
             >
               {configJSON.save}
+            </Button>
+            <Button
+              type="button"
+              size="lg"
+              className="col-span-10 bg-red-600 hover:bg-red-600"
+              onClick={handleDeleteClick}
+            >
+              {configJSON.deleteUserAccount}
             </Button>
           </div>
         </form>

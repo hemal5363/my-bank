@@ -68,3 +68,10 @@ export const resetPassword = async ({
 
   return data;
 };
+
+export const deleteUserAccount = async () => {
+  const data = await customFetch(`/api/userAccount`, {
+    method: "DELETE",
+  });
+  return data;
+};

@@ -40,6 +40,7 @@ const Page = () => {
     });
     if (userAccountData) {
       router.push(URL_CONSTANTS.LOGIN);
+      localStorage.clear();
     }
 
     hideLoader();

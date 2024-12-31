@@ -13,6 +13,7 @@ export const accountAlreadyExists =
   "An account with this email already exists.";
 export const userAccountCreated = "User account created successfully.";
 export const userAccountUpdated = "User account updated successfully.";
+export const userAccountDeleted = "User account deleted successfully.";
 export const currentPasswordIncorrect =
   "The current password entered is incorrect.";
 export const passwordUpdate = "Password updated successfully.";
@@ -38,6 +39,7 @@ export const passwordAndConfirmPasswordMatch =
   "The password and confirm password fields must match.";
 export const forgotPassword = "Forgot password";
 export const save = "Save";
+export const deleteUserAccount = "Delete User Account";
 
 // Account
 export const accountCreated = "Account created successfully.";

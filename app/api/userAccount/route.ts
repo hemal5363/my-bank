@@ -161,3 +161,31 @@ export const PUT = async (req: NextRequest) => {
     );
   }
 };
+
+export const DELETE = async (req: NextRequest) => {
+  await connectDB();
+
+  const tokenData: ITokenData = getTokenData(req);
+
+  try {
+    await UserAccount.findByIdAndDelete(tokenData._id);
+
+    const accounts = await Account.find({ _userAccount: tokenData._id });
+
+    const accountIds = accounts.map((account) => account._id);
+
+    await AccountHistory.deleteMany({ _account: { $in: accountIds } });
+
+    await Account.deleteMany({ _userAccount: tokenData._id })
+
+    return NextResponse.json(
+      { message: configJSON.userAccountDeleted },
+      { status: NEXT_RESPONSE_STATUS.ACCEPTED }
+    );
+  } catch (error: any) {
+    return NextResponse.json(
+      { error },
+      { status: NEXT_RESPONSE_STATUS.INTERNAL_SERVER_ERROR }
+    );
+  }
+};
