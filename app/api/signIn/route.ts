@@ -50,7 +50,7 @@ export const POST = async (req: NextRequest) => {
         expenseAccountId: account?._id,
       },
       secretKey,
-      { expiresIn: "1h" }
+      { expiresIn: "1d" }
     );
 
     return NextResponse.json(

@@ -81,7 +81,12 @@ export const GET = async (req: NextRequest) => {
         month: expense._id.month,
         totalAmount: expense.sum_val,
       }))
-      .sort((a, b) => b.month - a.month);
+      .sort((a, b) => {
+        if (b.year === a.year) {
+          return b.month - a.month;
+        }
+        return b.year - a.year;
+      });
 
     const totalMonthlyTypeExpense = await AccountHistory.aggregate([
       {
