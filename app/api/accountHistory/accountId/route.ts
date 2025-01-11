@@ -49,6 +49,8 @@ export const GET = async (req: NextRequest) => {
 
   if (expenseTypeId !== "undefined") {
     matchCreatedAt = { ...matchCreatedAt, _expenseType: expenseTypeId };
+  } else {
+    matchCreatedAt = { ...matchCreatedAt, _expenseType: { $ne: null } };
   }
 
   try {
