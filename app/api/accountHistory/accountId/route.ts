@@ -19,39 +19,39 @@ export const GET = async (req: NextRequest) => {
 
   let matchCreatedAt = {};
 
-  if (fromDate !== "undefined" && toDate !== "undefined") {
-    matchCreatedAt = {
-      createdAt: {
-        $gte: fromDate,
-        $lte: toDate,
-      },
-      _account: tokenData.expenseAccountId,
-    };
-  } else if (fromDate !== "undefined") {
-    matchCreatedAt = {
-      createdAt: {
-        $gte: fromDate,
-      },
-      _account: tokenData.expenseAccountId,
-    };
-  } else if (toDate !== "undefined") {
-    matchCreatedAt = {
-      createdAt: {
-        $lte: toDate,
-      },
-      _account: tokenData.expenseAccountId,
-    };
-  } else {
-    matchCreatedAt = {
-      _account: tokenData.expenseAccountId,
-    };
-  }
+  // if (fromDate !== "undefined" && toDate !== "undefined") {
+  //   matchCreatedAt = {
+  //     createdAt: {
+  //       $gte: fromDate,
+  //       $lte: toDate,
+  //     },
+  //     _account: tokenData.expenseAccountId,
+  //   };
+  // } else if (fromDate !== "undefined") {
+  //   matchCreatedAt = {
+  //     createdAt: {
+  //       $gte: fromDate,
+  //     },
+  //     _account: tokenData.expenseAccountId,
+  //   };
+  // } else if (toDate !== "undefined") {
+  //   matchCreatedAt = {
+  //     createdAt: {
+  //       $lte: toDate,
+  //     },
+  //     _account: tokenData.expenseAccountId,
+  //   };
+  // } else {
+  //   matchCreatedAt = {
+  //     _account: tokenData.expenseAccountId,
+  //   };
+  // }
 
-  if (expenseTypeId !== "undefined") {
-    matchCreatedAt = { ...matchCreatedAt, _expenseType: expenseTypeId };
-  } else {
-    matchCreatedAt = { ...matchCreatedAt, _expenseType: { $ne: null } };
-  }
+  // if (expenseTypeId !== "undefined") {
+  //   matchCreatedAt = { ...matchCreatedAt, _expenseType: expenseTypeId };
+  // } else {
+  //   matchCreatedAt = { ...matchCreatedAt, _expenseType: { $ne: null } };
+  // }
 
   try {
     console.log("accountHistory", matchCreatedAt)
