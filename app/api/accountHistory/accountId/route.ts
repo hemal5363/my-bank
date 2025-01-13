@@ -54,7 +54,7 @@ export const GET = async (req: NextRequest) => {
   }
 
   try {
-    console.log("accountHistory")
+    console.log("accountHistory", matchCreatedAt)
 
     const accountHistory = await AccountHistory.find(matchCreatedAt)
       .populate("_expenseType")
