@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { IAccountHistory } from "@/types";
+import { IAccountHistory, IExpenseType } from "@/types";
 import { DATE_FORMAT } from "@/constants";
 import * as configJSON from "@/constants/configJson";
 
@@ -54,7 +54,7 @@ const AccountHistoryTable = ({
               {accountsHistory.newAmount}
             </TableCell>
             <TableCell className="text-center">
-              {accountsHistory._expenseType?.name || "-"}
+              {(accountsHistory._expenseType as IExpenseType).name || "-"}
             </TableCell>
             <TableCell className="text-center">
               {accountsHistory.isCredited
