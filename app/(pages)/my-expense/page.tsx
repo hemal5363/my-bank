@@ -65,13 +65,22 @@ const page = () => {
       data: accountHistoryData,
       account,
       totalAmount,
+      expenseTypes,
     } = await getAllAccountHistoryByExpenseAccountId(
       date?.from,
       date?.to,
       eTypeId
     );
     setExpenseData(account);
-    setAllAccountsHistory(accountHistoryData);
+    setAllAccountsHistory(
+      accountHistoryData.map((accountHistory) => ({
+        ...accountHistory,
+        _expenseType: expenseTypes.find(
+          (expenseType: IExpenseType) =>
+            expenseType._id === accountHistory._expenseType
+        ) as IExpenseType,
+      }))
+    );
     setTotalExpense(totalAmount);
   };
 

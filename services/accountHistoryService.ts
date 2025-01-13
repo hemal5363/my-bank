@@ -1,5 +1,10 @@
 import { customFetch } from "@/utils/fetch";
-import { IAccount, IAccountHistory, IPostRequestAccountHistory } from "@/types";
+import {
+  IAccount,
+  IExpenseType,
+  IAccountHistory,
+  IPostRequestAccountHistory,
+} from "@/types";
 
 export const getAllAccountHistoryByAccountId = async (
   accountId: string
@@ -19,6 +24,7 @@ export const getAllAccountHistoryByExpenseAccountId = async (
   data: IAccountHistory[];
   account: IAccount;
   totalAmount: number;
+  expenseTypes: IExpenseType[];
 }> => {
   const jsonData = await customFetch(
     `/api/accountHistory/accountId?fromDate=${fromDate}&toDate=${toDate}&expenseTypeId=${expenseTypeId}`

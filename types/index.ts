@@ -11,7 +11,7 @@ export interface IAccountHistory {
   newAmount: number;
   isCredited: boolean;
   _account: string;
-  _expenseType: IExpenseType;
+  _expenseType: IExpenseType | string;
   createdAt: Date;
 }
 
