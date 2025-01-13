@@ -54,17 +54,25 @@ export const GET = async (req: NextRequest) => {
   }
 
   try {
+    console.log("accountHistory")
+
     const accountHistory = await AccountHistory.find(matchCreatedAt)
       .populate("_expenseType")
       .sort({
         createdAt: -1,
       });
 
+    console.log("accountHistory", accountHistory)
+
     const account = await Account.findById(tokenData.expenseAccountId);
+
+    console.log("account", account)
 
     const total = accountHistory
       .filter((account) => !account.isCredited)
       .reduce((totalSum, account) => totalSum + account.amount, 0);
+
+    console.log("total", total)
 
     return NextResponse.json(
       { data: accountHistory, account, totalAmount: total },
