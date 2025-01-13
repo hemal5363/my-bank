@@ -57,7 +57,7 @@ export const GET = async (req: NextRequest) => {
     console.log("accountHistory", matchCreatedAt)
 
     const accountHistory = await AccountHistory.find(matchCreatedAt)
-      .populate("_expenseType")
+      // .populate("_expenseType")
       .sort({
         createdAt: -1,
       });
