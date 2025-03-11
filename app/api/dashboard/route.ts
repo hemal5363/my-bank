@@ -11,6 +11,7 @@ const secretKey = process.env.AUTH_SECRET;
 export const GET = async (req: NextRequest) => {
   await connectDB();
   const url = new URL(req.url);
+  const month = url.searchParams.get("month");
 
   const token = req.headers.get("Authorization");
 
@@ -71,10 +72,9 @@ export const GET = async (req: NextRequest) => {
 
     const totalMonthlyExpenseAmount = totalMonthlyExpense
       .filter((expense) => {
-        return (
-          new Date(expense._id.year, expense._id.month - 1) >=
-          new Date(new Date().getFullYear() - 1, new Date().getMonth() - 1)
-        );
+        const lastYear = new Date();
+        lastYear.setFullYear(lastYear.getFullYear() - 1);
+        return new Date(expense._id.year, expense._id.month - 1) >= lastYear;
       })
       .map((expense) => ({
         year: expense._id.year,
@@ -99,6 +99,7 @@ export const GET = async (req: NextRequest) => {
       {
         $group: {
           _id: {
+            year: { $year: "$createdAt" },
             month: { $month: "$createdAt" },
             expenseType: "$_expenseType",
             accountId: "$_account",
@@ -122,7 +123,15 @@ export const GET = async (req: NextRequest) => {
 
     const totalMonthlyTypeExpenseAmount = totalMonthlyTypeExpense
       .filter((typeExpense) => {
-        return typeExpense._id.month === new Date().getMonth() + 1;
+        const lastYear = new Date();
+        lastYear.setFullYear(lastYear.getFullYear() - 1);
+        return new Date(typeExpense._id.year, typeExpense._id.month - 1) >= lastYear;
+      })
+      .filter((typeExpense) => {
+        return (
+          typeExpense._id.month ===
+          (month !== "undefined" ? Number(month) : new Date().getMonth()) + 1
+        );
       })
       .map((typeExpense) => ({
         expenseTypeDetails: typeExpense.expenseTypeDetails,

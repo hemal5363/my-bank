@@ -54,7 +54,7 @@ const AccountHistoryTable = ({
               {accountsHistory.newAmount}
             </TableCell>
             <TableCell className="text-center">
-              {(accountsHistory._expenseType as IExpenseType).name || "-"}
+              {(accountsHistory._expenseType as IExpenseType)?.name || "-"}
             </TableCell>
             <TableCell className="text-center">
               {accountsHistory.isCredited

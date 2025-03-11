@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import { ToastContainer } from "react-toastify";
 import { Inter } from "next/font/google";
 import { UserProvider } from "@/hooks/UserContext";
@@ -7,6 +8,11 @@ import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "My Bank",
+  icons: "/icon.ico",
+};
 
 export default function RootLayout({
   children,

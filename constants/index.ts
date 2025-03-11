@@ -80,3 +80,18 @@ export const LOCAL_STORAGE_CONSTANTS = {
   TOKEN: "token",
   USER_DATA: "userData",
 };
+
+export const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
