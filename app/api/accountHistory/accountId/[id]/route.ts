@@ -16,6 +16,7 @@ export const GET = async (
   try {
     const accountHistory = await AccountHistory.find({
       _account: id,
+      _expenseType: { $ne: null }
     })
       .populate("_expenseType")
       .sort({
