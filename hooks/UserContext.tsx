@@ -25,6 +25,7 @@ const defaultUserData: IUserAccount = {
   _id: "",
   name: "",
   email: "",
+  profileImage: ""
 };
 
 export const UserProvider = ({ children }: UserProviderProps) => {

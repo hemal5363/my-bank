@@ -18,7 +18,7 @@ import * as configJSON from "@/constants/configJson";
 import ProfileImageUploader from "@/components/shared/ProfileImageUploader";
 
 const Page = () => {
-  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
+  const [profileImageFile, setProfileImageFile] = useState<File | null>();
   const [profileImageUrl, setProfileImageUrl] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -48,6 +48,7 @@ const Page = () => {
     const formData = new FormData();
 
     if (profileImageFile) formData.append("image", profileImageFile);
+    else if (profileImageFile === null) formData.append("imageDelete", "true")
     formData.append("name", name);
 
     const userAccountData = await updateUserAccount(formData);

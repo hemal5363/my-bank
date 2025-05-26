@@ -22,12 +22,6 @@ import {
   DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
 function bufferToIncomingMessage(
   buffer: Buffer,
   headers: Record<string, string>,
@@ -198,9 +192,10 @@ export const PUT = async (req: NextRequest) => {
     });
 
     const name = fields.name?.[0];
+    const imageDelete = fields.imageDelete?.[0];
     const file = files.image?.[0];
 
-    let imageUrl: string | null = null;
+    let imageUrl: string | null | undefined;
 
     if (file) {
       const fileContent = await fs.readFile(file.filepath);
@@ -217,13 +212,14 @@ export const PUT = async (req: NextRequest) => {
       imageUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
     }
     const existingUserData = await UserAccount.findById(tokenData._id);
-    if (existingUserData.profileImage) {
+    if (existingUserData.profileImage && (imageDelete === "true" || !!file)) {
       await s3.send(
         new DeleteObjectCommand({
           Bucket: process.env.AWS_S3_BUCKET_NAME!,
           Key: existingUserData.profileImage.split("amazonaws.com/")[1], // the full path/key of the file in your bucket
         })
       );
+      imageUrl = imageDelete === "true" ? null : imageUrl
     }
 
     const existingUser = await UserAccount.findByIdAndUpdate(
