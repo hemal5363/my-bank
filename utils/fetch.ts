@@ -7,10 +7,12 @@ interface FetchOptions extends RequestInit {
   headers?: Record<string, string>;
 }
 
-export async function customFetch(url: string, options: FetchOptions = {}) {
+export async function customFetch(
+  url: string,
+  options: FetchOptions = {},
+  isFormData = false
+) {
   const defaultHeaders: Record<string, string> = {
-    "Content-Type": "application/json",
-    Accept: "application/json",
     Authorization: (await localStorage.getItem(
       LOCAL_STORAGE_CONSTANTS.TOKEN
     )) as string,
@@ -21,7 +23,11 @@ export async function customFetch(url: string, options: FetchOptions = {}) {
   const fetchOptions: RequestInit = {
     method: options.method || "GET",
     headers,
-    body: options.body ? JSON.stringify(options.body) : undefined,
+    body: options.body
+      ? isFormData
+        ? options.body
+        : JSON.stringify(options.body)
+      : undefined,
     ...options,
   };
 

@@ -8,11 +8,47 @@ import { getTokenData, hashPassword } from "@/utils/helper";
 import {
   IPatchRequestUserAccount,
   IPostRequestUserAccount,
-  IPutRequestUserAccount,
   ITokenData,
 } from "@/types";
 import { ACCOUNT_TYPES, NEXT_RESPONSE_STATUS } from "@/constants";
 import * as configJSON from "@/constants/configJson";
+import { IncomingForm } from "formidable";
+import { promises as fs } from "fs";
+import { Readable } from "stream";
+import type { IncomingMessage } from "http";
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+} from "@aws-sdk/client-s3";
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+function bufferToIncomingMessage(
+  buffer: Buffer,
+  headers: Record<string, string>,
+  method: string = "POST"
+): IncomingMessage {
+  const stream = Readable.from(buffer) as IncomingMessage;
+
+  stream.headers = headers;
+  stream.method = method;
+  stream.url = "/";
+
+  return stream;
+}
+
+const s3 = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+  },
+});
 
 export const GET = async (req: NextRequest) => {
   await connectDB();
@@ -134,15 +170,67 @@ export const PATCH = async (req: NextRequest) => {
 export const PUT = async (req: NextRequest) => {
   await connectDB();
 
-  const data: IPutRequestUserAccount = await req.json();
-
   const tokenData: ITokenData = getTokenData(req);
 
   try {
+    const contentType = req.headers.get("content-type");
+
+    if (!contentType?.includes("multipart/form-data")) {
+      return NextResponse.json(
+        { error: "Invalid content type" },
+        { status: 400 }
+      );
+    }
+
+    const buffer = Buffer.from(await req.arrayBuffer());
+
+    const headers = Object.fromEntries(req.headers.entries());
+
+    const mockReq = bufferToIncomingMessage(buffer, headers, "PUT");
+
+    const form = new IncomingForm({ multiples: false, keepExtensions: true });
+
+    const { fields, files } = await new Promise<any>((resolve, reject) => {
+      form.parse(mockReq as any, (err, fields, files) => {
+        if (err) reject(err);
+        else resolve({ fields, files });
+      });
+    });
+
+    const name = fields.name?.[0];
+    const file = files.image?.[0];
+
+    let imageUrl: string | null = null;
+
+    if (file) {
+      const fileContent = await fs.readFile(file.filepath);
+
+      const uploadParams = {
+        Bucket: process.env.AWS_S3_BUCKET_NAME!,
+        Key: `profile-image/${Date.now()}-${file.originalFilename}`,
+        Body: fileContent,
+        ContentType: file.mimetype || "application/octet-stream",
+      };
+
+      await s3.send(new PutObjectCommand(uploadParams));
+
+      imageUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
+    }
+    const existingUserData = await UserAccount.findById(tokenData._id);
+    if (existingUserData.profileImage) {
+      await s3.send(
+        new DeleteObjectCommand({
+          Bucket: process.env.AWS_S3_BUCKET_NAME!,
+          Key: existingUserData.profileImage.split("amazonaws.com/")[1], // the full path/key of the file in your bucket
+        })
+      );
+    }
+
     const existingUser = await UserAccount.findByIdAndUpdate(
       tokenData._id,
       {
-        name: data.name,
+        name,
+        profileImage: imageUrl,
       },
       { new: true }
     );
@@ -168,6 +256,16 @@ export const DELETE = async (req: NextRequest) => {
   const tokenData: ITokenData = getTokenData(req);
 
   try {
+    const existingUserData = await UserAccount.findById(tokenData._id);
+    if (existingUserData.profileImage) {
+      await s3.send(
+        new DeleteObjectCommand({
+          Bucket: process.env.AWS_S3_BUCKET_NAME!,
+          Key: existingUserData.profileImage.split("amazonaws.com/")[1], // the full path/key of the file in your bucket
+        })
+      );
+    }
+
     await UserAccount.findByIdAndDelete(tokenData._id);
 
     const accounts = await Account.find({ _userAccount: tokenData._id });
@@ -176,7 +274,7 @@ export const DELETE = async (req: NextRequest) => {
 
     await AccountHistory.deleteMany({ _account: { $in: accountIds } });
 
-    await Account.deleteMany({ _userAccount: tokenData._id })
+    await Account.deleteMany({ _userAccount: tokenData._id });
 
     return NextResponse.json(
       { message: configJSON.userAccountDeleted },

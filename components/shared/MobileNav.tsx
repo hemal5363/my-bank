@@ -37,7 +37,15 @@ const MobileNav = () => {
             onClick={() => setOpen(false)}
           >
             {configJSON.hello}, {truncateString(userData.name)}
-            <AccountCircleRoundedIcon fontSize="large" />
+            {userData.profileImage ? (
+              <img
+                src={userData.profileImage}
+                alt="Profile"
+                className="w-9 h-9 rounded-full"
+              />
+            ) : (
+              <AccountCircleRoundedIcon color="primary" fontSize="large" />
+            )}
           </Link>
           <Separator className="border border-gray-50" />
           <NavItems setOpen={setOpen} isMyUserAccountShow />

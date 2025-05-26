@@ -24,6 +24,7 @@ export interface IUserAccount {
   _id: string;
   name: string;
   email: string;
+  profileImage: string;
 }
 
 export interface ITokenData {
@@ -41,10 +42,6 @@ export interface IPostRequestUserAccount {
 export interface IPatchRequestUserAccount {
   oldPassword: string;
   password: string;
-}
-
-export interface IPutRequestUserAccount {
-  name: string;
 }
 
 export interface IPostRequestSignIn {

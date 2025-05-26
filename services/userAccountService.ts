@@ -4,7 +4,6 @@ import {
   IPostRequestSend,
   IPostRequestSignIn,
   IPostRequestUserAccount,
-  IPutRequestUserAccount,
   IUserAccount,
 } from "@/types";
 
@@ -27,13 +26,17 @@ export const createUserAccount = async ({
   return data;
 };
 
-export const updateUserAccount = async ({
-  name,
-}: IPutRequestUserAccount): Promise<IUserAccount> => {
-  const { data } = await customFetch("/api/userAccount", {
-    method: "PUT",
-    body: JSON.stringify({ name }),
-  });
+export const updateUserAccount = async (
+  formData: FormData
+): Promise<IUserAccount> => {
+  const { data } = await customFetch(
+    "/api/userAccount",
+    {
+      method: "PUT",
+      body: formData,
+    },
+    true
+  );
 
   return data;
 };

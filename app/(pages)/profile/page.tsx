@@ -15,8 +15,11 @@ import { hideLoader, showLoader } from "@/utils/helper";
 import { IUserAccount } from "@/types";
 import { URL_CONSTANTS } from "@/constants";
 import * as configJSON from "@/constants/configJson";
+import ProfileImageUploader from "@/components/shared/ProfileImageUploader";
 
 const Page = () => {
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
+  const [profileImageUrl, setProfileImageUrl] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
 
@@ -30,6 +33,7 @@ const Page = () => {
       const userData: IUserAccount = await getUserAccount();
       setName(userData.name);
       setEmail(userData.email);
+      setProfileImageUrl(userData.profileImage);
     };
 
     getUserData();
@@ -41,8 +45,12 @@ const Page = () => {
     e.preventDefault();
 
     showLoader();
+    const formData = new FormData();
 
-    const userAccountData = await updateUserAccount({ name });
+    if (profileImageFile) formData.append("image", profileImageFile);
+    formData.append("name", name);
+
+    const userAccountData = await updateUserAccount(formData);
     if (userAccountData) {
       setUserData(userAccountData);
     }
@@ -65,6 +73,12 @@ const Page = () => {
       </div>
       <div className="overflow-auto flex flex-col sm:flex-row justify-around items-center">
         <form className="grid gap-8 w-3/4" onSubmit={handleSubmit}>
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-4 sm:gap-8 justify-center">
+            <ProfileImageUploader
+              setProfileImageFile={setProfileImageFile}
+              profileImageUrl={profileImageUrl}
+            />
+          </div>
           <div className="flex flex-wrap sm:flex-nowrap items-center gap-4 sm:gap-8">
             <Label htmlFor="name" className="text-right">
               {configJSON.name}
