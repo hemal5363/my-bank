@@ -105,7 +105,7 @@ const Page = () => {
               disabled
             />
           </div>
-          <div className="flex items-center gap-8 justify-center">
+          <div className="flex items-center gap-8 justify-center flex-wrap">
             <Button
               type="submit"
               size="lg"
